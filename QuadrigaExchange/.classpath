@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ExchangeInterfaces"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/HelperLibraries"/>
+	<classpathentry kind="lib" path="/HelperLibraries/lib/commons-codec-1.7.jar"/>
+	<classpathentry kind="lib" path="/HelperLibraries/lib/jackson-annotations-2.4.1.jar"/>
+	<classpathentry kind="lib" path="/HelperLibraries/lib/jackson-core-2.8.6.jar"/>
+	<classpathentry kind="lib" path="/HelperLibraries/lib/jackson-databind-2.1.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/QuadrigaApiLibrary"/>
+	<classpathentry kind="lib" path="C:/Users/ryanb/workspace/HelperLibraries/htmlunit-2.27/lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

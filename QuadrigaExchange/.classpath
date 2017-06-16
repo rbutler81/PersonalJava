@@ -9,6 +9,6 @@
 	<classpathentry kind="lib" path="/HelperLibraries/lib/jackson-core-2.8.6.jar"/>
 	<classpathentry kind="lib" path="/HelperLibraries/lib/jackson-databind-2.1.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/QuadrigaApiLibrary"/>
-	<classpathentry kind="lib" path="C:/Users/ryanb/workspace/HelperLibraries/htmlunit-2.27/lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/RyanB/git/PersonalJava/HelperLibraries/htmlunit-2.27/lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

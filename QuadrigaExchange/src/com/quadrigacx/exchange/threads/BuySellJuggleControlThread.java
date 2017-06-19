@@ -27,8 +27,8 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		System.out.println("How much time to spend at max bid? (minutes)");
 		int timerVal = Integer.parseInt(Console.getConsole());
 		System.out.println();
-		Timer timer = new Timer(1000*timerVal);
-		Timer atMaxBidTimer = new Timer(1000*60*30);
+		Timer timer = new Timer(1000*30);
+		Timer atMaxBidTimer = new Timer(1000*60*timerVal);
 		
 		String oldLastTrade = "";
 		

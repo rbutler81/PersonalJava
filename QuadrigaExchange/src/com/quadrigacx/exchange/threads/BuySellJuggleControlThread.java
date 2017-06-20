@@ -247,7 +247,10 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
 									, cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys(), cd.getBotParams().getAmountToUse(), cd);
 					
-							if (cd.getUserTransactions().resetRoundSells()) cd.getRuntimeData().getRoundSells().clearTransactions();
+							if (cd.getUserTransactions().resetRoundSells()){
+								cd.getRuntimeData().getRoundSells().clearTransactions();
+								cd.getBotParams().setDontBuyPast("0");
+							}
 							
 							if (!lastMajorAvg.equals(cd.getRuntimeData().getTotalSells().getAvgPriceString())){
 							

@@ -17,9 +17,9 @@ public class QuadrigaApi {
 
 	protected static boolean debug = false;
 	
-	protected static String client = "4401";
-	protected static String apiKey = "YubkdTpuCW";
-	protected static String apiSecret = "197084474569da5d818c680aad965b2d";
+	protected static String client = "xxxx";
+	protected static String apiKey = "xxxx";
+	protected static String apiSecret = "xxxx";
 		
 	protected static String domain = "https://api.quadrigacx.com";
 	protected static String version = "v2";

@@ -31,6 +31,8 @@ public class UserTransactions extends QuadrigaCall{
 	private String lastBuyIdSearched = "";
 	private String lastTradeId = "";
 	private boolean minorBalanceZeroLast = true;
+	private String lastMajorBalance = "";
+	private String lastMinorBalance = "";
 		
 	
 	public UserTransactions(){
@@ -49,6 +51,30 @@ public class UserTransactions extends QuadrigaCall{
 		kv.clear();
 		kv.add(new KeyValuePair("book", book));
 		refreshData();
+	}
+	
+public boolean didMajorBalanceChange(){
+		
+		if (lastMajorBalance.equals(majorBalance.getValue().toString())){
+			lastMajorBalance = majorBalance.getValue().toString();
+			return false;
+		}
+		else{
+			lastMajorBalance = majorBalance.getValue().toString();
+			return true;
+		}
+	}
+	
+	public boolean didMinorBalanceChange(){
+		
+		if (lastMinorBalance.equals(minorBalance.getValue().toString())){
+			lastMinorBalance = minorBalance.getValue().toString();
+			return false;
+		}
+		else{
+			lastMinorBalance = minorBalance.getValue().toString();
+			return true;
+		}
 	}
 	
 	public boolean resetRoundSells(){

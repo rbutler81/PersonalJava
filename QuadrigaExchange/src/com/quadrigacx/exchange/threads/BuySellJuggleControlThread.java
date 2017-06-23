@@ -91,6 +91,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		String idAsk = "";
 		String idBid = "";
 		
+		cd.getUserTransactions().resetRoundSells();		
 				
 		timer.start();
 		
@@ -127,7 +128,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				}
 				
 								
-				
 				if (buying){
 					
 					cd.getWebOrderBook().getTc().lock();
@@ -224,6 +224,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				Messages.getBalances(cd);
 				System.out.println();
 				oldLastTrade = cd.getWebOrderBook().getData().getLastTradePrice();
+				
 				timer.start();
 			}
 			cd.getWebOrderBook().getTc().unlock();
@@ -231,7 +232,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			if (selling){
 				
 				//Check to see if new ask order should be made
-				if (cd.getRuntimeData().isNewAskPrice()){
+				if (cd.getRuntimeData().isNewAskPrice() || cd.getUserTransactions().didMajorBalanceChange()){
 				
 					if (!cd.getRuntimeData().getCurrentSellOrder().getId().equals("")){
 						//Cancel Order
@@ -257,8 +258,9 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 								Messages.newSell(cd);
 								System.out.println();
 								lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
-								cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
 							}
+							
+							cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
 						}
 						else{
 							//Order was cancelled
@@ -295,7 +297,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			if (buying){
 				
 				//Check to see if new ask order should be made
-				if (cd.getRuntimeData().isNewBidPrice()){
+				if (cd.getRuntimeData().isNewBidPrice() || cd.getUserTransactions().didMinorBalanceChange()){
 				
 					if (!cd.getRuntimeData().getCurrentBuyOrder().getId().equals("")){
 						//Cancel Order
@@ -317,8 +319,9 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 								Messages.newBuy(cd);
 								System.out.println();
 								lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
-								cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
 							}
+							
+							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
 						}
 						else{
 							//Order was cancelled

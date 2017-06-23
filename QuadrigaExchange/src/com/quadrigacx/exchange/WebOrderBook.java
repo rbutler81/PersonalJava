@@ -14,6 +14,7 @@ import javax.net.ssl.HttpsURLConnection;
 import com.quadrigacx.api.returnJson.helpers.GetCoinType;
 import com.quadrigacx.exchange.threads.ThreadControl;
 
+import helpers.Time;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.PriceAmount;
 
@@ -233,7 +234,8 @@ public class WebOrderBook {
 	            pageData += line;
 	        
 	    } catch (Exception x) {
-	    	x.printStackTrace();
+	    	System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Read timeout getting WebOrderBook");
+	    	System.out.println();
 	    } finally {
 	    	c.disconnect();
 	    }

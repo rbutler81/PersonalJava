@@ -32,4 +32,9 @@ public class CancelOrder extends QuadrigaCall{
 	public boolean isOrderCancelled(){
 		return r.isOrderCanceled();
 	}
+	
+	public boolean isOrderNotFound(){
+		if (this.getErrCode() == 106) return true;
+		else return false;
+	}
 }

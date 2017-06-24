@@ -44,6 +44,14 @@ public class QuadrigaCall {
 		this.tc = tc;
 	}
 
+	public int getErrCode(){
+		return r.getErrorResponse().getErrCode();
+	}
+	
+	public String getErrMsg(){
+		return r.getErrorResponse().getErrMessage();
+	}
+	
 	public boolean refreshData(){
 		return sendApiCall();
 	}

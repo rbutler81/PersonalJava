@@ -9,7 +9,6 @@ import com.quadrigacx.exchange.helpers.UI;
 import com.quadrigacx.exchange.threads.BuySellJuggleControlThread;
 import com.quadrigacx.exchange.threads.WebOrderBookGetter;
 
-
 import helpers.Console;
 import helpers.RateLimiter;
 
@@ -18,7 +17,6 @@ public class Main {
 
 	public static void main(String[] args) throws InterruptedException, MalformedURLException, IOException {
 	
-			
 	RateLimiter rl = new RateLimiter(2200);
 	
 	Messages.chooseBook();

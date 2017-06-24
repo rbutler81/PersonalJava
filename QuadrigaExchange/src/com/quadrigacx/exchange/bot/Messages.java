@@ -8,6 +8,13 @@ import helpers.Timer;
 
 public class Messages {
 
+	public static void cancelFailed(CommonData cd, boolean sell){
+		
+		System.out.print(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Cancel order failed: ");
+		if (sell) System.out.println(cd.getRuntimeData().getCurrentSellOrder().getId());
+		else System.out.println(cd.getRuntimeData().getCurrentBuyOrder().getId());
+	}
+	
 	public static void maxBidTimer(CommonData cd, Timer t){
 		
 		if (t.isStarted()){

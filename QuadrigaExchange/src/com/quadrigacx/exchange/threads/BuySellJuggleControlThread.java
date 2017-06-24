@@ -237,38 +237,53 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 					if (!cd.getRuntimeData().getCurrentSellOrder().getId().equals("")){
 						//Cancel Order
 						cd.getCancelOrder().cancelOrder(idAsk);
-						//Check if order was cancelled
-						if (!cd.getCancelOrder().isOrderCancelled()){			//if cancel failed - order may be filled - check for new transactions
-					
-							Messages.cancelledOrderFailed(cd.getRuntimeData().getCurrentSellOrder());
-							System.out.println();
+						boolean doneCancel = false;
 						
-							cd.getUserTransactions().refreshData();
-					
-							cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
-									, cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys(), cd.getBotParams().getAmountToUse(), cd);
-					
-							if (cd.getUserTransactions().resetRoundSells()){
-								cd.getRuntimeData().getRoundSells().clearTransactions();
-								cd.getBotParams().setDontBuyPast("0");
+						while (!doneCancel){
+						//Check if order was cancelled
+							if (!cd.getCancelOrder().isOrderCancelled()){			//if cancel failed - order may be filled - look closer
+						
+								if (cd.getCancelOrder().isOrderNotFound()){			//cancel order error message is 106 - probably got filled
+									
+									Messages.cancelledOrderFailed(cd.getRuntimeData().getCurrentSellOrder());
+									System.out.println();
+								
+									cd.getUserTransactions().refreshData();
+							
+									cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
+											, cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys(), cd.getBotParams().getAmountToUse(), cd);
+							
+									if (cd.getUserTransactions().resetRoundSells()){
+										cd.getRuntimeData().getRoundSells().clearTransactions();
+										cd.getBotParams().setDontBuyPast("0");
+									}
+									
+									if (!lastMajorAvg.equals(cd.getRuntimeData().getTotalSells().getAvgPriceString())){
+									
+										Messages.newSell(cd);
+										System.out.println();
+										lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
+									}
+									
+									cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
+								}
+								else{												//cancel order response came back with invalid data
+									
+									cd.getCancelOrder().cancelOrder(idAsk);
+									Messages.cancelFailed(cd, true);
+									System.out.println();
+								}
 							}
-							
-							if (!lastMajorAvg.equals(cd.getRuntimeData().getTotalSells().getAvgPriceString())){
-							
-								Messages.newSell(cd);
+							else{
+								//Order was cancelled
+								Messages.cancelledOrder(cd.getRuntimeData().getCurrentSellOrder());
 								System.out.println();
-								lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
+								cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
+								doneCancel = true;
 							}
-							
-							cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
-						}
-						else{
-							//Order was cancelled
-							Messages.cancelledOrder(cd.getRuntimeData().getCurrentSellOrder());
-							System.out.println();
-							cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
 						}
 					}
+					
 					//Place new order
 					BigDecimal leftToSell = Bot.leftToSell(cd);
 				
@@ -302,32 +317,47 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 					if (!cd.getRuntimeData().getCurrentBuyOrder().getId().equals("")){
 						//Cancel Order
 						cd.getCancelOrder().cancelOrder(idBid);
-						//Check if order was cancelled
-						if (!cd.getCancelOrder().isOrderCancelled()){			//if cancel failed - order may be filled - check for new transactions
-					
-							Messages.cancelledOrderFailed(cd.getRuntimeData().getCurrentBuyOrder());
-							System.out.println();
+						boolean doneCancel = false;
 						
-							cd.getUserTransactions().refreshData();
-					
-							cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
-									,cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys()
-									,cd.getBotParams().getAmountToUse(), cd);
-					
-							if (!lastMinorAvg.equals(cd.getRuntimeData().getBuys().getAvgPriceString())){
+						while (!doneCancel){
 							
-								Messages.newBuy(cd);
-								System.out.println();
-								lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
+							//Check if order was cancelled
+							if (!cd.getCancelOrder().isOrderCancelled()){			//if cancel failed - order may be filled - look closer
+						
+								if (cd.getCancelOrder().isOrderNotFound()){			//if cancel order err code is 106 - order probably filled
+									
+									Messages.cancelledOrderFailed(cd.getRuntimeData().getCurrentBuyOrder());
+									System.out.println();
+								
+									cd.getUserTransactions().refreshData();
+							
+									cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
+											,cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys()
+											,cd.getBotParams().getAmountToUse(), cd);
+							
+									if (!lastMinorAvg.equals(cd.getRuntimeData().getBuys().getAvgPriceString())){
+									
+										Messages.newBuy(cd);
+										System.out.println();
+										lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
+									}
+									
+									cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
+									doneCancel = true;
+								}
+								else{												//cancel order failed - bad data
+									
+									cd.getCancelOrder().cancelOrder(idBid);
+									Messages.cancelFailed(cd, false);
+								}
 							}
-							
-							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
-						}
-						else{
-							//Order was cancelled
-							Messages.cancelledOrder(cd.getRuntimeData().getCurrentBuyOrder());
-							System.out.println();
-							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
+							else{
+								//Order was cancelled
+								Messages.cancelledOrder(cd.getRuntimeData().getCurrentBuyOrder());
+								System.out.println();
+								cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
+								doneCancel = true;
+							}
 						}
 					}
 				

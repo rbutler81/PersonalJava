@@ -200,14 +200,14 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						cd.getBotParams().setDontBuyPast("0");
 					}
 					
-					if (!lastMajorAvg.equals(cd.getRuntimeData().getTotalSells().getAvgPriceString())){
+					if (cd.getUserTransactions().isNewSell()){
 						Messages.newSell(cd);
 						System.out.println();
 						lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
 						selling = ((cd.getRuntimeData().getTotalSells().getTotalTradedAsBigDec().compareTo(cd.getBotParams().getAmountToTradeAsBigDec()) < 0)
 								&& (cd.getUserTransactions().getMajorRoundBalance().getValue().compareTo(zero) > 0));
 					}
-					if (!lastMinorAvg.equals(cd.getRuntimeData().getBuys().getAvgPriceString())){
+					if (cd.getUserTransactions().isNewBuy()){
 						Messages.newBuy(cd);
 						System.out.println();
 						lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
@@ -258,7 +258,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 										cd.getBotParams().setDontBuyPast("0");
 									}
 									
-									if (!lastMajorAvg.equals(cd.getRuntimeData().getTotalSells().getAvgPriceString())){
+									if (cd.getUserTransactions().isNewSell()){
 									
 										Messages.newSell(cd);
 										System.out.println();
@@ -335,7 +335,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 											,cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys()
 											,cd.getBotParams().getAmountToUse(), cd);
 							
-									if (!lastMinorAvg.equals(cd.getRuntimeData().getBuys().getAvgPriceString())){
+									if (cd.getUserTransactions().isNewBuy()){
 									
 										Messages.newBuy(cd);
 										System.out.println();

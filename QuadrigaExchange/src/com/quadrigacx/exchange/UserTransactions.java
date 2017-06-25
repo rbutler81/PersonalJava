@@ -33,7 +33,9 @@ public class UserTransactions extends QuadrigaCall{
 	private boolean minorBalanceZeroLast = true;
 	private String lastMajorBalance = "";
 	private String lastMinorBalance = "";
-		
+	private boolean newSell = false;
+	private boolean newBuy = false;
+	
 	
 	public UserTransactions(){
 		this.r = new ResponseWrapper(); 
@@ -53,7 +55,25 @@ public class UserTransactions extends QuadrigaCall{
 		refreshData();
 	}
 	
-public boolean didMajorBalanceChange(){
+	public boolean isNewSell(){
+		boolean r = false;
+		if (newSell){
+			r = newSell;
+			newSell = false;
+		}
+		return r;
+	}
+	
+	public boolean isNewBuy(){
+		boolean r = false;
+		if (newBuy){
+			r = newBuy;
+			newBuy = false;
+		}
+		return r;
+	}
+	
+	public boolean didMajorBalanceChange(){
 		
 		if (lastMajorBalance.equals(majorBalance.getValue().toString())){
 			lastMajorBalance = majorBalance.getValue().toString();
@@ -198,6 +218,8 @@ public boolean didMajorBalanceChange(){
 						
 						if (transMajor.compareTo(zero) < 0){					//Found a sell transaction
 						
+							newSell = true;
+							
 							transMajor = transMajor.multiply(new BigDecimal("-1").setScale(0, RoundingMode.DOWN));
 							totalSells.addTransaction(transMajor.toString(), r.getUserTransactionsResponse().getTrades().get(i).getRate());
 							roundSells.addTransaction(transMajor.toString(), r.getUserTransactionsResponse().getTrades().get(i).getRate());
@@ -226,6 +248,8 @@ public boolean didMajorBalanceChange(){
 						}
 						else if (transMajor.compareTo(zero) > 0){				//Found a buy transaction
 						
+							newBuy = true;
+							
 							transMinor = transMinor.multiply(new BigDecimal("-1").setScale(0, RoundingMode.DOWN));
 							buys.addTransaction(transMajor.toString(), r.getUserTransactionsResponse().getTrades().get(i).getRate());
 						

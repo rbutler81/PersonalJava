@@ -75,9 +75,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				, Double.parseDouble(cd.getBotParams().getAmountToUse())));
 		
 		
-		String lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
-		String lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
-		
+			
 		System.out.println();
 		System.out.println("Getting Order Book... ");
 		System.out.println();
@@ -203,14 +201,12 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 					if (cd.getUserTransactions().isNewSell()){
 						Messages.newSell(cd);
 						System.out.println();
-						lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
 						selling = ((cd.getRuntimeData().getTotalSells().getTotalTradedAsBigDec().compareTo(cd.getBotParams().getAmountToTradeAsBigDec()) < 0)
 								&& (cd.getUserTransactions().getMajorRoundBalance().getValue().compareTo(zero) > 0));
 					}
 					if (cd.getUserTransactions().isNewBuy()){
 						Messages.newBuy(cd);
 						System.out.println();
-						lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
 						buying = (cd.getUserTransactions().getMinorBalance().getValue().compareTo(zero) > 0);
 					}
 					
@@ -262,10 +258,9 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									
 										Messages.newSell(cd);
 										System.out.println();
-										lastMajorAvg = cd.getRuntimeData().getTotalSells().getAvgPriceString();
 									}
-									
 									cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
+									doneCancel = true;
 								}
 								else{												//cancel order response came back with invalid data
 									
@@ -339,7 +334,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									
 										Messages.newBuy(cd);
 										System.out.println();
-										lastMinorAvg = cd.getRuntimeData().getBuys().getAvgPriceString();
 									}
 									
 									cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());

@@ -26,8 +26,8 @@ public class Messages {
 	public static void maxBidTimer(CommonData cd, Timer t){
 		
 		if (t.isStarted()){
-			System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": At max bid for : " 
-					+ t.getAccumTime());
+			System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": At max bid for " 
+					+ t.getAccumTime() + " of " + Time.convertMilliToHMS(t.getInterval()));
 		}	
 	}
 	

@@ -10,8 +10,8 @@ public class Timer {
 
 	
 	
-	public double getInterval() {
-		return interval;
+	public long getInterval() {
+		return (long)interval;
 	}
 
 	public void setInterval(double interval) {

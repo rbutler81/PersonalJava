@@ -9,6 +9,7 @@ import com.quadrigacx.api.QuadrigaMethods;
 import com.quadrigacx.api.returnJson.ResponseWrapper;
 import com.quadrigacx.api.returnJson.helpers.GetCoinType;
 import com.quadrigacx.api.returnJson.helpers.Trade;
+import com.quadrigacx.exchange.bot.Bot;
 import com.quadrigacx.exchange.threads.CommonData;
 
 import helpers.KeyValuePair;
@@ -236,6 +237,7 @@ public class UserTransactions extends QuadrigaCall{
 										, RoundingMode.DOWN);
 								
 								atu = atu.subtract(transMajor);
+								
 								if (atu.compareTo(atuo) > 0){
 									cd.getBotParams().setAmountToUse(atu.toString());
 								}
@@ -255,17 +257,29 @@ public class UserTransactions extends QuadrigaCall{
 						
 							BigDecimal amountToUse = new BigDecimal(amountToUseMax).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
 							
+							minorBalance.setValue(minorBalance.getValue().subtract(transMinor));
+							
 							majorBalance.setValue(majorBalance.getValue().add(transMajor));
 							majorRoundBalance.setValue(majorRoundBalance.getValue().add(transMajor));
+							
+								
+							if (minorBalance.getValue().compareTo(zero) == 0){
+								
+								if (cd.getBotParams().isAutoAmount()){
+									
+									amountToUse = new BigDecimal(Bot.calcAskAmount(cd)).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
+									cd.getBotParams().setAmountToUse(amountToUse.toString());
+									cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+								}
+								
+								cd.getRuntimeData().getRoundSells().clearTransactions();
+								cd.getBotParams().setDontBuyPast("0");
+							}
 							
 							if (majorRoundBalance.getValue().compareTo(amountToUse) > 0){
 								majorRoundBalance.setValue(amountToUse);
 							}
-							
-							minorBalance.setValue(minorBalance.getValue().subtract(transMinor));
 						}
-					
-					
 					}
 							
 					if (i < (r.getUserTransactionsResponse().getTrades().size() - 1)){

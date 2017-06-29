@@ -70,7 +70,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			System.out.println();
 			
 			atMaxBidTimer = new Timer(1000*60*Integer.parseInt(Bot.timeToWait(cd).toString()));
-			System.out.println("Will wait " + atMaxBidTimer.getInterval() + " minutes before selling more");
+			System.out.println("Will wait " + Time.convertMilliToHMS(atMaxBidTimer.getInterval()) + " before selling more");
 			System.out.println();
 			
 			cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
@@ -122,7 +122,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		String idAsk = "";
 		String idBid = "";
 		
-		cd.getUserTransactions().resetRoundSells();		
+		//cd.getUserTransactions().resetRoundSells();		
 				
 		timer.start();
 		
@@ -226,7 +226,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						,cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys()
 						,cd.getBotParams().getAmountToUse(), cd)){
 					
-					if (cd.getUserTransactions().resetRoundSells()){
+					/*if (cd.getUserTransactions().resetRoundSells()){
 						cd.getRuntimeData().getRoundSells().clearTransactions();
 						cd.getBotParams().setDontBuyPast("0");
 						
@@ -235,7 +235,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
 							cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
 						}
-					}
+					}*/
 					
 					if (cd.getUserTransactions().isNewSell()){
 						Messages.newSell(cd);
@@ -290,7 +290,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
 											, cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys(), cd.getBotParams().getAmountToUse(), cd);
 							
-									if (cd.getUserTransactions().resetRoundSells()){
+									/*if (cd.getUserTransactions().resetRoundSells()){
 										cd.getRuntimeData().getRoundSells().clearTransactions();
 										cd.getBotParams().setDontBuyPast("0");
 										
@@ -299,7 +299,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 											cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
 											cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
 										}
-									}
+									}*/
 									
 									if (cd.getUserTransactions().isNewSell()){
 									

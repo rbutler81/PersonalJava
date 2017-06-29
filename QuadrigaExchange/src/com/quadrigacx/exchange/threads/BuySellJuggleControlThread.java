@@ -239,12 +239,14 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 					
 					if (cd.getUserTransactions().isNewSell()){
 						Messages.newSell(cd);
+						Messages.getActualBalances(cd);
 						System.out.println();
 						selling = ((cd.getRuntimeData().getTotalSells().getTotalTradedAsBigDec().compareTo(cd.getBotParams().getAmountToTradeAsBigDec()) < 0)
 								&& (cd.getUserTransactions().getMajorRoundBalance().getValue().compareTo(zero) > 0));
 					}
 					if (cd.getUserTransactions().isNewBuy()){
 						Messages.newBuy(cd);
+						Messages.getActualBalances(cd);
 						System.out.println();
 						buying = (cd.getUserTransactions().getMinorBalance().getValue().compareTo(zero) > 0);
 					}
@@ -257,7 +259,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				Messages.wontBuyPast(cd);
 				Messages.maxBidTimer(cd, atMaxBidTimer);
 				Messages.getBalances(cd);
-				Messages.getActualBalances(cd);
 				System.out.println();
 				oldLastTrade = cd.getWebOrderBook().getData().getLastTradePrice();
 				
@@ -303,6 +304,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									if (cd.getUserTransactions().isNewSell()){
 									
 										Messages.newSell(cd);
+										Messages.getActualBalances(cd);
 										System.out.println();
 									}
 									cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
@@ -379,6 +381,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									if (cd.getUserTransactions().isNewBuy()){
 									
 										Messages.newBuy(cd);
+										Messages.getActualBalances(cd);
 										System.out.println();
 									}
 									

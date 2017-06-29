@@ -18,6 +18,9 @@ public class BotParams {
 	private String amountToUse = "";
 	private String amountToUseOriginal = "";
 	private String book;
+	private String fractionToSell = "";
+	private String daysToLast = "";
+	private boolean autoAmount = false;
 	private CoinType major;
 	private CoinType minor;
 	private boolean raisedSellLimit = false;
@@ -28,6 +31,37 @@ public class BotParams {
 		minor = GetCoinType.getMinor(book);
 	}
 	
+	
+	public String getFractionToSell() {
+		return fractionToSell;
+	}
+
+
+	public void setFractionToSell(String fractionToSell) {
+		this.fractionToSell = fractionToSell;
+	}
+
+
+	public String getDaysToLast() {
+		return daysToLast;
+	}
+
+
+	public void setDaysToLast(String daysToLast) {
+		this.daysToLast = daysToLast;
+	}
+
+
+	public boolean isAutoAmount() {
+		return autoAmount;
+	}
+
+
+	public void setAutoAmount(boolean autoAmount) {
+		this.autoAmount = autoAmount;
+	}
+
+
 	public String getAmountToUseOriginal() {
 		return amountToUseOriginal;
 	}

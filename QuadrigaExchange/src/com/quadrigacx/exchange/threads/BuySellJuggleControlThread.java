@@ -24,25 +24,58 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		boolean done = false;
 		boolean selling = true;
 		boolean buying = true;
-		System.out.println("How much time to spend at max bid? (minutes)");
-		int timerVal = Integer.parseInt(Console.getConsole());
-		System.out.println();
 		Timer timer = new Timer(1000*30);
-		Timer atMaxBidTimer = new Timer(1000*60*timerVal);
-		
 		String oldLastTrade = "";
-		
 		BigDecimal zero = new BigDecimal(0.0).setScale(0, RoundingMode.DOWN);
+		Timer atMaxBidTimer;
+		
+		Messages.getActualBalances(cd);
+		System.out.println();
 		
 		System.out.println("Amount of " + cd.getRuntimeData().getMajor().getName() + " to trade total: ");
 		cd.getBotParams().setAmountToTrade(Console.getConsole());
-		
-		System.out.println("Amount of " + cd.getRuntimeData().getMajor().getName() + " to juggle with: ");
-		cd.getBotParams().setAmountToUse(Console.getConsole());
 		System.out.println();
-		cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
 		
-		cd.getUserTransactions().setMinorBalance(new Coin(cd.getRuntimeData().getMinor(), 0.0));
+		System.out.println("Automate the max bid timer / sell amount? (y/n)");
+		String automate = Console.getConsole();
+		System.out.println();
+		
+		if (automate.equals("n")){
+			
+			cd.getBotParams().setAutoAmount(false);
+		
+			System.out.println("How much time to spend at max bid? (minutes)");
+			int timerVal = Integer.parseInt(Console.getConsole());
+			System.out.println();
+			
+			atMaxBidTimer = new Timer(1000*60*timerVal);
+						
+			System.out.println("Amount of " + cd.getRuntimeData().getMajor().getName() + " to juggle with: ");
+			cd.getBotParams().setAmountToUse(Console.getConsole());
+			System.out.println();
+			cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+			
+			cd.getUserTransactions().setMinorBalance(new Coin(cd.getRuntimeData().getMinor(), 0.0));
+		}
+		else {
+			
+			cd.getBotParams().setAutoAmount(true);
+			
+			System.out.println("Fraction of " + cd.getRuntimeData().getMajor().getName() + " balance to use for initial sell:");
+			cd.getBotParams().setFractionToSell(Console.getConsole()); 
+			System.out.println();
+			
+			System.out.println("Amount of days to last if price gets too high:");
+			cd.getBotParams().setDaysToLast(Console.getConsole()); 
+			System.out.println();
+			
+			atMaxBidTimer = new Timer(Double.parseDouble(Bot.timeToWait(cd).toString()));
+			System.out.println("Will wait " + atMaxBidTimer.getInterval() + " minutes before selling more");
+			System.out.println();
+			
+			cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
+			cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+		}
 		
 		System.out.println("Start with a balance of " + cd.getRuntimeData().getMinor().getName() + " ? (y/n)");
 		
@@ -100,9 +133,9 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			idBid = cd.getRuntimeData().getCurrentBuyOrder().getId();
 			
 			selling = ((cd.getRuntimeData().getTotalSells().getTotalTradedAsBigDec().compareTo(cd.getBotParams().getAmountToTradeAsBigDec()) < 0)
-					&& (cd.getUserTransactions().getMajorRoundBalance().getValue().compareTo(zero) > 0));
+					&& (Bot.aboveMinBalanceSell(cd)));
 			
-			buying = (cd.getUserTransactions().getMinorBalance().getValue().compareTo(zero) > 0);
+			buying = Bot.aboveMinBalanceBuy(cd);
 			
 			done = ((cd.getRuntimeData().getTotalSells().getTotalTradedAsBigDec().compareTo(cd.getBotParams().getAmountToTradeAsBigDec()) >= 0)
 					&& (cd.getUserTransactions().getMinorBalance().getValue().compareTo(zero) == 0));
@@ -196,6 +229,12 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 					if (cd.getUserTransactions().resetRoundSells()){
 						cd.getRuntimeData().getRoundSells().clearTransactions();
 						cd.getBotParams().setDontBuyPast("0");
+						
+						if (cd.getBotParams().isAutoAmount()){ 				//Calculate new ask amount if bot is running in auto mode
+						
+							cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
+							cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+						}
 					}
 					
 					if (cd.getUserTransactions().isNewSell()){
@@ -218,6 +257,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				Messages.wontBuyPast(cd);
 				Messages.maxBidTimer(cd, atMaxBidTimer);
 				Messages.getBalances(cd);
+				Messages.getActualBalances(cd);
 				System.out.println();
 				oldLastTrade = cd.getWebOrderBook().getData().getLastTradePrice();
 				
@@ -252,6 +292,12 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									if (cd.getUserTransactions().resetRoundSells()){
 										cd.getRuntimeData().getRoundSells().clearTransactions();
 										cd.getBotParams().setDontBuyPast("0");
+										
+										if (cd.getBotParams().isAutoAmount()){ 				//Calculate new ask amount if bot is running in auto mode
+											
+											cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
+											cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+										}
 									}
 									
 									if (cd.getUserTransactions().isNewSell()){

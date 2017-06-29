@@ -13,6 +13,66 @@ import helpers.econ.currency.CoinType;
 
 public class Bot {
 
+	public static boolean aboveMinBalanceSell(CommonData cd){
+		
+		BigDecimal min = new BigDecimal(cd.getRuntimeData().getMajor().getMinTransAmount())
+				.setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+		BigDecimal bal = new BigDecimal(cd.getUserTransactions().getMajorRoundBalance().getValue().toString())
+				.setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+		
+		return (bal.compareTo(min) > 0);
+	}
+	
+public static boolean aboveMinBalanceBuy(CommonData cd){
+		
+		BigDecimal min = new BigDecimal(cd.getRuntimeData().getMajor().getMinTransAmount())
+				.setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+				
+		cd.getWebOrderBook().getTc().lock();
+		String bidPrice = (Bot.optimizeBidWebData(cd.getRuntimeData().getCurrentBuyOrder(), cd.getRuntimeData().getRoundSells(), cd, false));
+		cd.getWebOrderBook().getTc().unlock();	
+		
+		BigDecimal price = new BigDecimal(bidPrice).setScale(cd.getRuntimeData().getMinor().getDecimalPlaces(), RoundingMode.DOWN);
+		BigDecimal minorBal = new BigDecimal(cd.getUserTransactions().getMinorBalance().getValue().toString())
+				.setScale(cd.getRuntimeData().getMinor().getDecimalPlaces(), RoundingMode.DOWN);
+		
+		BigDecimal bal = minorBal.divide(price, cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+						
+		return (bal.compareTo(min) > 0);
+	}
+	
+	public static String calcAskAmount(CommonData cd){
+		
+		while (!cd.getBalances().refreshData()){}
+		
+		String balance = cd.getBalances().getMajor(cd.getRuntimeData().getBook()).getBalance();
+				
+		BigDecimal b = new BigDecimal(balance).setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+		BigDecimal f = new BigDecimal(cd.getBotParams().getFractionToSell()).setScale(10, RoundingMode.DOWN);
+		
+		b = b.multiply(f).setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+		
+		return b.toString();		
+	}
+	
+	public static BigDecimal timeToWait(CommonData cd){
+		
+		int i = cd.getBotParams().getFractionToSell().indexOf('.');
+		String scale = cd.getBotParams().getFractionToSell().substring(i);
+		int s = scale.length() - 1;
+		BigDecimal f = new BigDecimal(cd.getBotParams().getFractionToSell()).setScale(s, RoundingMode.DOWN);
+		
+		BigDecimal d = new BigDecimal(cd.getBotParams().getDaysToLast()).setScale(0, RoundingMode.DOWN);
+		
+		BigDecimal numerator = new BigDecimal("2880").setScale(0, RoundingMode.DOWN)
+				.multiply(f)
+				.multiply(d);
+		BigDecimal denom = new BigDecimal("1").setScale(0, RoundingMode.DOWN)
+				.subtract(f);
+		
+		return numerator.divide(denom, 0, RoundingMode.DOWN);
+	}
+	
 	public static BigDecimal leftToSell(CommonData cd){
 		
 		BigDecimal totalToTrade = new BigDecimal(cd.getBotParams().getAmountToTrade())

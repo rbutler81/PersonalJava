@@ -12,8 +12,8 @@ public class Messages {
 		
 		while (!cd.getBalances().refreshData()){}
 		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Quadriga " + cd.getRuntimeData().getMajor().getName()
-				+ ": " + cd.getBalances().getMajor(cd.getRuntimeData().getBook()).getAvailable() + " Quadriga " + cd.getRuntimeData().getMinor().getName()
-				+ ": " + cd.getBalances().getMinor(cd.getRuntimeData().getBook()).getAvailable());
+				+ ": " + cd.getBalances().getMajor(cd.getRuntimeData().getBook()).getBalance() + " Quadriga " + cd.getRuntimeData().getMinor().getName()
+				+ ": " + cd.getBalances().getMinor(cd.getRuntimeData().getBook()).getBalance());
 	}
 	
 	public static void cancelFailed(CommonData cd, boolean sell){

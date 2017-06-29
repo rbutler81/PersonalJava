@@ -36,6 +36,10 @@ public static boolean aboveMinBalanceBuy(CommonData cd){
 		BigDecimal minorBal = new BigDecimal(cd.getUserTransactions().getMinorBalance().getValue().toString())
 				.setScale(cd.getRuntimeData().getMinor().getDecimalPlaces(), RoundingMode.DOWN);
 		
+		if ((price.compareTo(new BigDecimal(0).setScale(0)) == 0)){
+			return false;
+		}
+		
 		BigDecimal bal = minorBal.divide(price, cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);
 						
 		return (bal.compareTo(min) > 0);
@@ -185,7 +189,7 @@ public static boolean aboveMinBalanceBuy(CommonData cd){
 			else return "ERROR";
 		}
 		
-		else if (!sell){					//Bid Order
+		else{																		//Bid Order
 		
 			//My current volume weighted average sell price
 			BigDecimal avgSellPrice = new BigDecimal(sellTl.getAvgPriceString()).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
@@ -251,8 +255,7 @@ public static boolean aboveMinBalanceBuy(CommonData cd){
 			
 		}
 		
-		return "ERROR";
-		
+				
 	}
 	
 	public static String optimizeBid(OrderResult or, TransactionList sellTl, CommonData cd){

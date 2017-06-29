@@ -69,7 +69,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			cd.getBotParams().setDaysToLast(Console.getConsole()); 
 			System.out.println();
 			
-			atMaxBidTimer = new Timer(Double.parseDouble(Bot.timeToWait(cd).toString()));
+			atMaxBidTimer = new Timer(1000*60*Integer.parseInt(Bot.timeToWait(cd).toString()));
 			System.out.println("Will wait " + atMaxBidTimer.getInterval() + " minutes before selling more");
 			System.out.println();
 			

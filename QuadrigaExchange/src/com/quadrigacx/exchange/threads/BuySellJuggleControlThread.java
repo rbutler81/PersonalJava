@@ -200,14 +200,12 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						.getMajor().getDecimalPlaces(), RoundingMode.DOWN);
 				
 				atu = atu.add(atuo);
-				cd.getBotParams().setAmountToUse(atu.toString());
+				cd.getBotParams().setAmountToUse(remainingBalance.add(atu).toString());
 				
 				cd.getUserTransactions().getMajorBalance().setValue(
 						cd.getUserTransactions().getMajorBalance().getValue().add(atu));
 				cd.getUserTransactions().getMajorRoundBalance().setValue(
 						cd.getUserTransactions().getMajorRoundBalance().getValue().add(atu));
-				
-				cd.getBotParams().setAmountToUse(remainingBalance.add(atu).toString());
 				
 				Messages.raiseAmountToUse(cd);
 				System.out.println();

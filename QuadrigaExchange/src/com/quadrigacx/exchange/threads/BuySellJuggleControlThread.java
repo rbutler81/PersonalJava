@@ -107,8 +107,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		cd.getUserTransactions().setMajorRoundBalance(new Coin(cd.getRuntimeData().getMajor()
 				, Double.parseDouble(cd.getBotParams().getAmountToUse())));
 		
-		
-			
 		System.out.println();
 		System.out.println("Getting Order Book... ");
 		System.out.println();
@@ -122,8 +120,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		String idAsk = "";
 		String idBid = "";
 		
-		//cd.getUserTransactions().resetRoundSells();		
-				
 		timer.start();
 		
 		//While not done
@@ -142,7 +138,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			
 			if (done) cd.getWebOrderBook().getTc().done();
 			
-									
 			//Run optimize bid / ask price functions
 			if (selling || buying){
 				
@@ -179,9 +174,8 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 					}
 					
 					if (selling && atMaxBidTimer.isStarted()) atMaxBidTimer.stop();
-					
-					
 				}
+				
 				else if (!buying && !cd.getRuntimeData().getCurrentBuyOrder().getPrice().equals("")){ 
 					cd.getRuntimeData().setCurrentBuyOrder(null);
 					cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
@@ -198,10 +192,13 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				if (!cd.getBotParams().isRaisedSellLimit()) cd.getBotParams().setRaisedSellLimit(true);
 				atMaxBidTimer.stop();
 				
-				BigDecimal atu = new BigDecimal(cd.getBotParams().getAmountToUse()).setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(),
-						RoundingMode.DOWN);
-				BigDecimal atuo = new BigDecimal(cd.getBotParams().getAmountToUseOriginal()).setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(),
-						RoundingMode.DOWN);
+				BigDecimal remainingBalance = new BigDecimal("0").setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), 
+						RoundingMode.DOWN).add(cd.getUserTransactions().getMajorBalance().getValue());
+				BigDecimal atu = new BigDecimal(cd.getBotParams().getAmountToUse()).setScale(cd.getRuntimeData().getMajor()
+						.getDecimalPlaces(), RoundingMode.DOWN);
+				BigDecimal atuo = new BigDecimal(cd.getBotParams().getAmountToUseOriginal()).setScale(cd.getRuntimeData()
+						.getMajor().getDecimalPlaces(), RoundingMode.DOWN);
+				
 				atu = atu.add(atuo);
 				cd.getBotParams().setAmountToUse(atu.toString());
 				
@@ -209,6 +206,8 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						cd.getUserTransactions().getMajorBalance().getValue().add(atu));
 				cd.getUserTransactions().getMajorRoundBalance().setValue(
 						cd.getUserTransactions().getMajorRoundBalance().getValue().add(atu));
+				
+				cd.getBotParams().setAmountToUse(remainingBalance.add(atu).toString());
 				
 				Messages.raiseAmountToUse(cd);
 				System.out.println();
@@ -225,17 +224,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				if (cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
 						,cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys()
 						,cd.getBotParams().getAmountToUse(), cd)){
-					
-					/*if (cd.getUserTransactions().resetRoundSells()){
-						cd.getRuntimeData().getRoundSells().clearTransactions();
-						cd.getBotParams().setDontBuyPast("0");
-						
-						if (cd.getBotParams().isAutoAmount()){ 				//Calculate new ask amount if bot is running in auto mode
-						
-							cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
-							cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
-						}
-					}*/
 					
 					if (cd.getUserTransactions().isNewSell()){
 						Messages.newSell(cd);
@@ -290,17 +278,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 									cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
 											, cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys(), cd.getBotParams().getAmountToUse(), cd);
 							
-									/*if (cd.getUserTransactions().resetRoundSells()){
-										cd.getRuntimeData().getRoundSells().clearTransactions();
-										cd.getBotParams().setDontBuyPast("0");
-										
-										if (cd.getBotParams().isAutoAmount()){ 				//Calculate new ask amount if bot is running in auto mode
-											
-											cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
-											cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
-										}
-									}*/
-									
 									if (cd.getUserTransactions().isNewSell()){
 									
 										Messages.newSell(cd);

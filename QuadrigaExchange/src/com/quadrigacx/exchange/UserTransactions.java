@@ -248,7 +248,7 @@ public class UserTransactions extends QuadrigaCall{
 							}
 						
 						}
-						else if (transMajor.compareTo(zero) > 0){				//Found a buy transaction
+						else if (transMajor.compareTo(zero) > 0){								//Found a buy transaction
 						
 							newBuy = true;
 							
@@ -262,12 +262,15 @@ public class UserTransactions extends QuadrigaCall{
 							majorBalance.setValue(majorBalance.getValue().add(transMajor));
 							majorRoundBalance.setValue(majorRoundBalance.getValue().add(transMajor));
 							
-								
-							if (minorBalance.getValue().compareTo(zero) == 0){
+							BigDecimal minMinorBal = new BigDecimal(minorBalance.getType().getMinTransAmount())
+									.setScale(minorBalance.getType().getDecimalPlaces(), RoundingMode.DOWN);
+							
+							if (minorBalance.getValue().compareTo(minMinorBal) < 0){
 								
 								if (cd.getBotParams().isAutoAmount()){
 									
-									amountToUse = new BigDecimal(Bot.calcAskAmount(cd)).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
+									amountToUse = new BigDecimal(Bot.calcAskAmount(cd)).setScale(major.getDecimalPlaces(), 
+											RoundingMode.DOWN);
 									cd.getBotParams().setAmountToUse(amountToUse.toString());
 									cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
 								}

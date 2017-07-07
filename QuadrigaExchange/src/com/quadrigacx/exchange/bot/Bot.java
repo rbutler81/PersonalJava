@@ -2,6 +2,7 @@ package com.quadrigacx.exchange.bot;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 import com.quadrigacx.api.returnJson.helpers.GetCoinType;
 import com.quadrigacx.api.returnJson.helpers.OrderResult;
@@ -13,6 +14,50 @@ import helpers.econ.currency.CoinType;
 
 public class Bot {
 
+	public static boolean checkAndCancelOpenBuys(CommonData cd){
+		
+		List<String> openBuys = cd.getOpenOrders().getOpenBuyOrders();
+		if (openBuys.size() > 0){
+			
+			for (int i = 0; i < openBuys.size(); i++){
+				
+				while (!cd.getCancelOrder().cancelOrder(openBuys.get(i))){}
+				if (cd.getCancelOrder().isOrderCancelled()){
+					Messages.cancelledOrphanedOrder(openBuys.get(i));
+					System.out.println();
+				}
+				else{
+					Messages.cancelledOrphanedOrderFailed(openBuys.get(i));
+					System.out.println();
+				}
+			}
+		return true;
+		}
+	return false;
+	}
+	
+	public static boolean checkAndCancelOpenSells(CommonData cd){
+		
+		List<String> openSells = cd.getOpenOrders().getOpenSellOrders();
+		if (openSells.size() > 0){
+			
+			for (int i = 0; i < openSells.size(); i++){
+				
+				while (!cd.getCancelOrder().cancelOrder(openSells.get(i))){}
+				if (cd.getCancelOrder().isOrderCancelled()){
+					Messages.cancelledOrphanedOrder(openSells.get(i));
+					System.out.println();
+				}
+				else{
+					Messages.cancelledOrphanedOrderFailed(openSells.get(i));
+					System.out.println();
+				}
+			}
+		return true;
+		}
+	return false;
+	}
+	
 	public static boolean aboveMinBalanceSell(CommonData cd){
 		
 		BigDecimal min = new BigDecimal(cd.getRuntimeData().getMajor().getMinTransAmount())
@@ -23,7 +68,7 @@ public class Bot {
 		return (bal.compareTo(min) > 0);
 	}
 	
-public static boolean aboveMinBalanceBuy(CommonData cd){
+	public static boolean aboveMinBalanceBuy(CommonData cd){
 		
 		BigDecimal min = new BigDecimal(cd.getRuntimeData().getMajor().getMinTransAmount())
 				.setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN);

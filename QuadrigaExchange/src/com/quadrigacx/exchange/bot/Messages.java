@@ -128,6 +128,15 @@ public class Messages {
 		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Order cancelled: " + or.getId());
 	}
 	
+	public static void cancelledOrphanedOrder(String id){
+		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Orphan order cancelled: " + id);
+	}
+	
+	public static void cancelledOrphanedOrderFailed(String id){
+		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Could not cancel orphaned order " 
+				+ id + " is no longer active");
+	}
+	
 	public static void avgBuySellPrices(CommonData cd){
 		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Sold " + cd.getRuntimeData().getTotalSells().getTotalTraded()
 				+  " " + cd.getRuntimeData().getMajor().getName() + " @ " + cd.getRuntimeData().getTotalSells().getAvgPriceString()
@@ -137,7 +146,7 @@ public class Messages {
 	}
 	
 	public static void cancelledOrderFailed(OrderResult or){
-		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Could not cancel order #" 
+		System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Could not cancel order " 
 				+ or.getId() + " is no longer active");
 	}
 }

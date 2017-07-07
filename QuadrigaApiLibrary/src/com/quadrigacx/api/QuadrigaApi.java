@@ -17,9 +17,9 @@ public class QuadrigaApi {
 
 	protected static boolean debug = false;
 	
-	protected static String client = "xxxx";
-	protected static String apiKey = "xxxx";
-	protected static String apiSecret = "xxxxx";
+	protected static String client = "4401";
+	protected static String apiKey = "YubkdTpuCW";
+	protected static String apiSecret = "3e410d139b41d3f76dcb9eea0c479477";
 		
 	protected static String domain = "https://api.quadrigacx.com";
 	protected static String version = "v2";
@@ -120,7 +120,7 @@ public class QuadrigaApi {
 	        c.disconnect();
 	    }
 
-return jsonResponse;        
+	    return jsonResponse;        
 	}
 	
 	private String buildJson(){

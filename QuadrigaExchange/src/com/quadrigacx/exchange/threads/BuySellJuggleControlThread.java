@@ -333,10 +333,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							Messages.getBalances(cd);
 							System.out.println();
 						}
-						else if (cd.getSellLimit().getErrCode() == 21){				//Insufficient funds to place buy order
-							Bot.checkAndCancelOpenBuys(cd);
-							cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
-						}
 					}
 				}
 			}
@@ -415,6 +411,10 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							Messages.getHighLow(cd);
 							Messages.getBalances(cd);
 							System.out.println();
+						}
+						else if (cd.getBuyLimit().getErrCode() == 21){				//Insufficient funds to place buy order
+							Bot.checkAndCancelOpenBuys(cd);
+							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
 						}
 						
 					}

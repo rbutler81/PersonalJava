@@ -95,7 +95,7 @@ public class QuadrigaCall {
 				r = oldR;
 				oldR = null;
 				return false;
-			}
+			} 
 			
 			if (r.getErrorResponse().getErrCode() == 0){
 				success = true;

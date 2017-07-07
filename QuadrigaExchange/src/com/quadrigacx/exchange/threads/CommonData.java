@@ -4,6 +4,7 @@ import com.quadrigacx.exchange.Balances;
 import com.quadrigacx.exchange.BuyLimit;
 import com.quadrigacx.exchange.CancelOrder;
 import com.quadrigacx.exchange.LookupOrder;
+import com.quadrigacx.exchange.OpenOrders;
 import com.quadrigacx.exchange.OrderBook;
 import com.quadrigacx.exchange.RuntimeData;
 import com.quadrigacx.exchange.SellLimit;
@@ -25,6 +26,7 @@ public class CommonData {
 	private BotParams botParams;
 	private RuntimeData runtimeData;
 	private WebOrderBook webOrderBook;
+	private OpenOrders openOrders;
 	private RateLimiter rl;
 	
 	public CommonData(String book, RateLimiter rl){
@@ -32,6 +34,7 @@ public class CommonData {
 		orderBook = new OrderBook(rl, book);
 		balances = new Balances(rl);
 		userTransactions = new UserTransactions(rl, book);
+		openOrders = new OpenOrders(rl, book);
 		lookupOrder = new LookupOrder(rl);
 		cancelOrder = new CancelOrder(rl);
 		buyLimit = new BuyLimit(rl);
@@ -43,6 +46,14 @@ public class CommonData {
 
 	public WebOrderBook getWebOrderBook() {
 		return webOrderBook;
+	}
+
+	public OpenOrders getOpenOrders() {
+		return openOrders;
+	}
+
+	public void setOpenOrders(OpenOrders openOrders) {
+		this.openOrders = openOrders;
 	}
 
 	public void setWebOrderBook(WebOrderBook webOrderBook) {

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import com.quadrigacx.exchange.threads.CommonData;
-import com.quadrigacx.exchange.bot.Bot;
 import com.quadrigacx.exchange.bot.Messages;
 import com.quadrigacx.exchange.helpers.UI;
 import com.quadrigacx.exchange.threads.BuySellJuggleControlThread;

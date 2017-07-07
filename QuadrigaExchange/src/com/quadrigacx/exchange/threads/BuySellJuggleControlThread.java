@@ -102,8 +102,10 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			
 		}
 		
+		while (!cd.getBalances().refreshData()){}
+		
 		cd.getUserTransactions().setMajorBalance(new Coin(cd.getRuntimeData().getMajor()
-				, Double.parseDouble(cd.getBotParams().getAmountToUse())));
+				, Double.parseDouble(cd.getBalances().getMajor(cd.getRuntimeData().getBook()).getBalance())));
 		cd.getUserTransactions().setMajorRoundBalance(new Coin(cd.getRuntimeData().getMajor()
 				, Double.parseDouble(cd.getBotParams().getAmountToUse())));
 		
@@ -202,8 +204,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				atu = atu.add(atuo);
 				cd.getBotParams().setAmountToUse(remainingBalance.add(atu).toString());
 				
-				cd.getUserTransactions().getMajorBalance().setValue(
-						cd.getUserTransactions().getMajorBalance().getValue().add(atu));
 				cd.getUserTransactions().getMajorRoundBalance().setValue(
 						cd.getUserTransactions().getMajorRoundBalance().getValue().add(atu));
 				

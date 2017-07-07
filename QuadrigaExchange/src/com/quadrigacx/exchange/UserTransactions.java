@@ -225,7 +225,10 @@ public class UserTransactions extends QuadrigaCall{
 							totalSells.addTransaction(transMajor.toString(), r.getUserTransactionsResponse().getTrades().get(i).getRate());
 							roundSells.addTransaction(transMajor.toString(), r.getUserTransactionsResponse().getTrades().get(i).getRate());
 						
-							majorBalance.setValue(majorBalance.getValue().subtract(transMajor));
+							while (!cd.getBalances().refreshData()){}
+							
+							majorBalance.setValue(new BigDecimal(cd.getBalances().getMajor(cd.getRuntimeData().getBook()).getBalance())
+									.setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN));
 							majorRoundBalance.setValue(majorRoundBalance.getValue().subtract(transMajor));
 							minorBalance.setValue(minorBalance.getValue().add(transMinor));
 							
@@ -257,9 +260,11 @@ public class UserTransactions extends QuadrigaCall{
 						
 							BigDecimal amountToUse = new BigDecimal(amountToUseMax).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
 							
-							minorBalance.setValue(minorBalance.getValue().subtract(transMinor));
+							while (!cd.getBalances().refreshData()){}
 							
-							majorBalance.setValue(majorBalance.getValue().add(transMajor));
+							minorBalance.setValue(minorBalance.getValue().subtract(transMinor));
+							majorBalance.setValue(new BigDecimal(cd.getBalances().getMajor(cd.getRuntimeData().getBook()).getBalance())
+									.setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), RoundingMode.DOWN));
 							majorRoundBalance.setValue(majorRoundBalance.getValue().add(transMajor));
 							
 							BigDecimal minMinorBal = new BigDecimal(minorBalance.getType().getMinTransAmount())

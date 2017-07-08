@@ -195,7 +195,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				atMaxBidTimer.stop();
 				
 				BigDecimal remainingBalance = new BigDecimal("0").setScale(cd.getRuntimeData().getMajor().getDecimalPlaces(), 
-						RoundingMode.DOWN).add(cd.getUserTransactions().getMajorBalance().getValue());
+						RoundingMode.DOWN).add(cd.getUserTransactions().getMajorRoundBalance().getValue());
 				BigDecimal atu = new BigDecimal(cd.getBotParams().getAmountToUse()).setScale(cd.getRuntimeData().getMajor()
 						.getDecimalPlaces(), RoundingMode.DOWN);
 				BigDecimal atuo = new BigDecimal(cd.getBotParams().getAmountToUseOriginal()).setScale(cd.getRuntimeData()

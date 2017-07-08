@@ -415,6 +415,8 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						else if (cd.getBuyLimit().getErrCode() == 21){				//Insufficient funds to place buy order
 							Bot.checkAndCancelOpenBuys(cd);
 							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
+							while (!cd.getBalances().refreshData()){}
+							cd.getUserTransactions().getMinorBalance().setValue(cd.getBalances().getMinor(cd.getRuntimeData().getBook()).getAvailable());
 						}
 						
 					}

@@ -32,4 +32,8 @@ public class Coin {
 		value = val.setScale(type.getDecimalPlaces(), RoundingMode.DOWN);
 	}
 	
+	public void setValue(String val){
+		value = new BigDecimal(val).setScale(type.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
 }

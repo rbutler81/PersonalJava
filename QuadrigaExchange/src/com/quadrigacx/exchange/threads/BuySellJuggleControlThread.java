@@ -413,6 +413,51 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							System.out.println();
 						}
 						else if (cd.getBuyLimit().getErrCode() == 21){				//Insufficient funds to place buy order
+							
+							//Check if any new sales
+							cd.getWebOrderBook().getTc().lock();
+							
+							System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Checking for new sales..." );
+												
+							cd.getUserTransactions().refreshData();
+							//True if a new sell or buy has taken place
+							if (cd.getUserTransactions().findNewTransactionsJuggle(cd.getRuntimeData().getTotalSells()
+									,cd.getRuntimeData().getRoundSells(), cd.getRuntimeData().getBuys()
+									,cd.getBotParams().getAmountToUse(), cd)){
+								
+								if (cd.getUserTransactions().isNewSell()){
+									Messages.newSell(cd);
+									Messages.getActualBalances(cd);
+									System.out.println();
+									selling = ((cd.getRuntimeData().getTotalSells().getTotalTradedAsBigDec().compareTo(cd.getBotParams()
+											.getAmountToTradeAsBigDec()) < 0) && (Bot.aboveMinBalanceSell(cd)));
+									if (!selling){
+										cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
+									}
+								}
+								if (cd.getUserTransactions().isNewBuy()){
+									Messages.newBuy(cd);
+									Messages.getActualBalances(cd);
+									System.out.println();
+									buying = Bot.aboveMinBalanceBuy(cd);
+									if (!buying){
+										cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
+									}
+								}
+								
+							}
+							Messages.avgBuySellPrices(cd);
+							Messages.getHighLow(cd);
+							Messages.getSpread(cd);
+							Messages.myBidAsk(cd);
+							Messages.wontBuyPast(cd);
+							Messages.maxBidTimer(cd, atMaxBidTimer);
+							Messages.getBalances(cd);
+							System.out.println();
+							oldLastTrade = cd.getWebOrderBook().getData().getLastTradePrice();
+							
+							cd.getWebOrderBook().getTc().unlock();
+							
 							Bot.checkAndCancelOpenBuys(cd);
 							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
 							while (!cd.getBalances().refreshData()){}

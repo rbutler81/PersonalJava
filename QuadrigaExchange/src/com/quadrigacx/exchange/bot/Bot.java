@@ -21,7 +21,8 @@ public class Bot {
 			
 			for (int i = 0; i < openBuys.size(); i++){
 				
-				while (!cd.getCancelOrder().cancelOrder(openBuys.get(i))){}
+				cd.getCancelOrder().cancelOrder(openBuys.get(i));
+				
 				if (cd.getCancelOrder().isOrderCancelled()){
 					Messages.cancelledOrphanedOrder(openBuys.get(i));
 					System.out.println();
@@ -43,7 +44,7 @@ public class Bot {
 			
 			for (int i = 0; i < openSells.size(); i++){
 				
-				while (!cd.getCancelOrder().cancelOrder(openSells.get(i))){}
+				cd.getCancelOrder().cancelOrder(openSells.get(i));
 				if (cd.getCancelOrder().isOrderCancelled()){
 					Messages.cancelledOrphanedOrder(openSells.get(i));
 					System.out.println();

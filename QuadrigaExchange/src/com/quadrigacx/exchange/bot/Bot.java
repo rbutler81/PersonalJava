@@ -8,8 +8,10 @@ import com.quadrigacx.api.returnJson.helpers.GetCoinType;
 import com.quadrigacx.api.returnJson.helpers.OrderResult;
 import com.quadrigacx.exchange.threads.CommonData;
 
+import helpers.BigDec;
 import helpers.econ.buysell.TransactionList;
 import helpers.econ.currency.CoinType;
+import helpers.econ.currency.PriceAmount;
 
 
 public class Bot {
@@ -146,6 +148,84 @@ public class Bot {
 			
 		}
 		else return totalLeftToTrade;
+	}
+	
+	public static String optimizeBidWebDataNew(OrderResult or, CommonData cd, boolean sell){
+	
+		//Get fee for trading pair and coin types
+		String feeString = getFee(cd.getOrderBook().getBook());
+		CoinType minor = GetCoinType.getMinor(cd.getOrderBook().getBook());
+		
+		// *** Setup variables needed in calculations
+		//Zero
+		BigDecimal zero = new BigDecimal("0.0").setScale(0, RoundingMode.DOWN);		
+		//My current buy or sell price
+		if (or.getPrice().equals("")){
+			if (sell){
+				or.setPrice("999999999");
+			}
+			else if (!sell){
+				or.setPrice(minor.getMinDenom());
+			}
+		}
+		BigDecimal myBid = new BigDecimal(or.getPrice()).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+		//Determine fee + desired spread
+		BigDecimal fee = new BigDecimal(feeString).setScale(2, RoundingMode.DOWN).add(new BigDecimal(feeString).setScale(2, RoundingMode.DOWN));
+		BigDecimal desiredSpread = fee.add(new BigDecimal(cd.getBotParams().getMinDesiredProfit()).setScale(2, RoundingMode.DOWN));
+		
+		if (sell){					//Ask Order
+
+			//Determine the current "don't sell less than" price
+			BigDecimal dontSellLess = new BigDecimal(cd.getWebOrderBook().getData().getBids().get(0).getPrice())
+					.setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+			BigDecimal num = desiredSpread.divide(new BigDecimal("100").setScale(4, RoundingMode.DOWN), 4, RoundingMode.DOWN);
+			num = num.add(new BigDecimal("1").setScale(0, RoundingMode.DOWN));
+			dontSellLess = dontSellLess.multiply(num).setScale(minor.getDecimalPlaces(), RoundingMode.UP);
+						
+			//Check to see if I'm the lowest ask
+			BigDecimal lowAsk = new BigDecimal(cd.getWebOrderBook().getData().getAsks().get(0).getPrice())
+					.setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+			boolean amountsMatch = cd.getWebOrderBook().getData().getAsks().get(0).getAmount().equals(or.getAmount());
+			
+			//Evaluate conditions to make a decision
+			boolean A = anyAsk_LE_DSL(dontSellLess, cd.getWebOrderBook().getData().getAsks());
+			boolean B = myAsk_EQ_DSL(dontSellLess, or.getPrice());
+			boolean C = myAsk_GT_DSL(dontSellLess, or.getPrice());
+			boolean D = myAsk_EQ_LowAsk(or.getPrice(), cd.getWebOrderBook().getData().getAsks(), amountsMatch, minor);
+			
+			//Decide which possible bid direction to make
+			boolean bidLower = (!B && C && !D);
+			boolean bidHigherOrSame = (B && !C && D) || (A && B && !C) || (!A && !B && C && D) || (A && !B && C && !D);
+			
+			//Look into cases to see which bid direction to make
+			if (bidLower && !bidHigherOrSame){
+				return bidOneLess(minor, lowAsk).toString();				//out bid the lowest ask
+			}
+			else if (!bidLower && bidHigherOrSame){
+				
+			}
+		}
+	}
+	
+	private static boolean anyAsk_LE_DSL(BigDecimal dsl, List<PriceAmount> asks){
+		BigDecimal lowAsk = new BigDecimal(asks.get(0).getPrice()).setScale(dsl.scale(), RoundingMode.DOWN);
+		return BigDec.LE(lowAsk, dsl);
+	}
+	
+	private static boolean myAsk_EQ_DSL(BigDecimal dsl, String myAsk){
+		BigDecimal myAskBD = new BigDecimal(myAsk).setScale(dsl.scale(), RoundingMode.DOWN);
+		return BigDec.EQ(myAskBD, dsl);
+	}
+	
+	private static boolean myAsk_GT_DSL(BigDecimal dsl, String myAsk){
+		BigDecimal myAskBD = new BigDecimal(myAsk).setScale(dsl.scale(), RoundingMode.DOWN);
+		return BigDec.GT(myAskBD, dsl);
+	}
+	
+	private static boolean myAsk_EQ_LowAsk(String myAsk, List<PriceAmount> asks, boolean amountsMatch, CoinType minor){
+		BigDecimal myAskBD = new BigDecimal(myAsk).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+		BigDecimal lowAsk = new BigDecimal(asks.get(0).getPrice()).setScale(myAskBD.scale(), RoundingMode.DOWN);
+		return (BigDec.EQ(myAskBD, lowAsk) && amountsMatch);
 	}
 	
 	public static String optimizeBidWebData(OrderResult or, TransactionList sellTl, CommonData cd, boolean sell){

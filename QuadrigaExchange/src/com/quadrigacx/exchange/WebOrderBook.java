@@ -12,6 +12,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import com.quadrigacx.api.returnJson.helpers.GetCoinType;
+import com.quadrigacx.api.returnJson.helpers.OrderResult;
 import com.quadrigacx.exchange.threads.ThreadControl;
 
 import helpers.Time;
@@ -31,6 +32,10 @@ public class WebOrderBook {
 	private List<PriceAmount> bidList = new ArrayList<PriceAmount>();
 	private String lastTradePrice = "";
 	private WebOrderBookData data;
+	private CoinType minor = null;
+	private CoinType major = null;
+	
+	private static final int ORDER_BOOK_ENTRIES = 20;
 	
 	public WebOrderBookData getData() {
 		return data;
@@ -38,8 +43,8 @@ public class WebOrderBook {
 
 	public WebOrderBook(String book){
 		
-		CoinType minor = GetCoinType.getMinor(book);
-		CoinType major = GetCoinType.getMajor(book);
+		this.minor = GetCoinType.getMinor(book);
+		this.major = GetCoinType.getMajor(book);
 		url = "https://www.quadrigacx.com/trade/" + major.getSmallName() + "/" + minor.getSmallName();
 		
 		try {
@@ -106,18 +111,76 @@ public class WebOrderBook {
 	}
 	
 	private String findNextValue(int i){
-		
 		index = findNextNumber(i);
 		return getNumberAsString(index);
-		
 	}
 	
 	public String getLowAsk(){
 		return data.getAsks().get(0).getPrice();
 	}
 	
+	public BigDecimal getLowAskPriceBigDec(){
+		return new BigDecimal(data.getAsks().get(0).getPrice()).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
+	public BigDecimal getLowAskAmountBigDec(){
+		return new BigDecimal(data.getAsks().get(0).getAmount()).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
 	public String getHighBid(){
 		return data.getBids().get(0).getPrice();
+	}
+	
+	public BigDecimal getHighBidPriceBigDec(){
+		return new BigDecimal(data.getBids().get(0).getPrice()).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
+	public BigDecimal getHighBidAmountBigDec(){
+		return new BigDecimal(data.getBids().get(0).getAmount()).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
+	public int getMyAskRank(OrderResult or){
+		
+		tc.lock();
+		
+		boolean orderFound = false;
+		int i = 0;
+		while (!orderFound || (i < ORDER_BOOK_ENTRIES)){
+			if (data.getAsks().get(i).getPrice().equals(or.getPrice())){
+				if (data.getAsks().get(i).getAmount().equals(or.getAmount())){
+					orderFound = true;
+				}
+				else i++;
+			}
+			else i++;
+		}
+		
+		tc.unlock();
+		
+		if (orderFound) return i;
+		else return -1;
+	}
+	
+	public int getMyBidRank(OrderResult or){
+		
+		tc.lock();
+		
+		boolean orderFound = false;
+		int i = 0;
+		while (!orderFound || (i < ORDER_BOOK_ENTRIES)){
+			if (data.getBids().get(i).getPrice().equals(or.getPrice())){
+				if (data.getBids().get(i).getAmount().equals(or.getAmount())){
+					orderFound = true;
+				}
+				else i++;
+			}
+			else i++;
+		}
+		
+		tc.unlock();
+		
+		if (orderFound) return i;
+		else return -1;
 	}
 	
 	public String getSpread(){
@@ -143,7 +206,7 @@ public class WebOrderBook {
 		index = pageData.indexOf("<td>", index);
 		askRawData.clear();
 		
-		while (askRawData.size() < 30){
+		while (askRawData.size() < ORDER_BOOK_ENTRIES){
 			askRawData.add(findNextValue(index));
 			index = pageData.indexOf("<td>", index);
 		}
@@ -160,7 +223,7 @@ public class WebOrderBook {
 		
 		int i = 0;
 				
-		while (askList.size() < 10){
+		while (askList.size() < ORDER_BOOK_ENTRIES){
 		
 			askList.add(new PriceAmount(askRawData.get(i), askRawData.get(i + 1)));
 			bidList.add(new PriceAmount(bidRawData.get(i), bidRawData.get(i + 1)));
@@ -175,7 +238,7 @@ public class WebOrderBook {
 		index = pageData.indexOf("<td>", index);
 		bidRawData.clear();
 		
-		while (bidRawData.size() < 30){
+		while (bidRawData.size() < ORDER_BOOK_ENTRIES){
 			bidRawData.add(findNextValue(index));
 			index = pageData.indexOf("<td>", index);
 		}
@@ -189,6 +252,8 @@ public class WebOrderBook {
 		connectAndGet();
 		
 		if (pageData.length() > 0){
+			
+			tc.lock();
 			
 			askList = null;
 			askList = new ArrayList<PriceAmount>();
@@ -207,6 +272,8 @@ public class WebOrderBook {
 			getLastTradePrice();
 			parseRawData();
 			data = new WebOrderBookData(askList, bidList, lastTradePrice);
+			
+			tc.unlock();
 		}
 		
 	}

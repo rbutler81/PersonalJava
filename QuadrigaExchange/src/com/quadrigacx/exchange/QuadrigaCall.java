@@ -45,7 +45,14 @@ public class QuadrigaCall {
 	}
 
 	public int getErrCode(){
-		return r.getErrorResponse().getErrCode();
+		int rVal = 0;
+		try{
+			rVal = r.getErrorResponse().getErrCode();
+		}
+		catch (Exception e) {
+			rVal = 999;
+		}
+		return rVal;
 	}
 	
 	public String getErrMsg(){

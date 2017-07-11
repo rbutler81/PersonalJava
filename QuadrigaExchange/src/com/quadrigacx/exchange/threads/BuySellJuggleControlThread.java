@@ -410,7 +410,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							Messages.getBalances(cd);
 							System.out.println();
 						}
-						else if (cd.getBuyLimit().getErrCode() == 21){				//Insufficient funds to place buy order
+						else if ((cd.getBuyLimit().getErrCode() == 21) || (cd.getBuyLimit().getErrCode() == 999) ){	//Insufficient funds to place buy order
 							
 							//Check if any new sales
 							System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Checking for new sales..." );

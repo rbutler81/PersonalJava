@@ -455,6 +455,8 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());
 							while (!cd.getBalances().refreshData()){}
 							cd.getUserTransactions().getMinorBalance().setValue(cd.getBalances().getMinor(cd.getRuntimeData().getBook()).getAvailable());
+							
+							timer.start();
 						}
 						
 					}

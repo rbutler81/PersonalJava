@@ -30,12 +30,10 @@ public class WebOrderBook {
 	private List<PriceAmount> askList = new ArrayList<PriceAmount>();
 	private List<PriceAmount> bidList = new ArrayList<PriceAmount>();
 	private String lastTradePrice = "";
+	private String lastTradeTime = "";
+	private String oldLastTradeTime = "";
 	private WebOrderBookData data;
 	
-	public WebOrderBookData getData() {
-		return data;
-	}
-
 	public WebOrderBook(String book){
 		
 		CoinType minor = GetCoinType.getMinor(book);
@@ -49,6 +47,21 @@ public class WebOrderBook {
 		}
 		
 		refresh();		
+	}
+	
+	public boolean isNewTrade(){
+		boolean rVal = false;
+		tc.lock();
+		if (!oldLastTradeTime.equals(lastTradeTime)){
+			rVal = true;
+		}
+		oldLastTradeTime = lastTradeTime;
+		tc.unlock();
+		return rVal;
+	}
+	
+	public WebOrderBookData getData() {
+		return data;
 	}
 	
 	public ThreadControl getTc() {
@@ -156,6 +169,12 @@ public class WebOrderBook {
 		lastTradePrice = findNextValue(index);
 	}
 	
+private void getLastTradeTime(){
+		
+		index = pageData.indexOf("<tr data-date=");
+		lastTradeTime = findNextValue(index);
+	}
+	
 	private void parseRawData(){
 		
 		int i = 0;
@@ -187,8 +206,10 @@ public class WebOrderBook {
 		pageData = "";
 		
 		connectAndGet();
-		
+				
 		if (pageData.length() > 0){
+			
+			tc.lock();
 			
 			askList = null;
 			askList = new ArrayList<PriceAmount>();
@@ -204,9 +225,12 @@ public class WebOrderBook {
 		
 			getAskData();
 			getBidData();
-			getLastTradePrice();
+			getLastTradeTime();
 			parseRawData();
-			data = new WebOrderBookData(askList, bidList, lastTradePrice);
+			data = new WebOrderBookData(askList, bidList, lastTradePrice, lastTradeTime);
+			
+			tc.unlock();
+			
 		}
 		
 	}

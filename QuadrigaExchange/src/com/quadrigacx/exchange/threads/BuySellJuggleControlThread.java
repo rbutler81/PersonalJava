@@ -25,7 +25,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		boolean selling = true;
 		boolean buying = true;
 		Timer timer = new Timer(1000*30);
-		String oldLastTrade = "";
 		BigDecimal zero = new BigDecimal(0.0).setScale(0, RoundingMode.DOWN);
 		Timer atMaxBidTimer;
 		
@@ -212,8 +211,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			}
 			
 			//Check if any new sales
-			cd.getWebOrderBook().getTc().lock();
-			if (!oldLastTrade.equals(cd.getWebOrderBook().getData().getLastTradePrice()) || timer.isDone()){
+			if (cd.getWebOrderBook().isNewTrade() || timer.isDone()){
 				
 				System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Checking for new sales..." );
 								
@@ -256,11 +254,11 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				Messages.maxBidTimer(cd, atMaxBidTimer);
 				Messages.getBalances(cd);
 				System.out.println();
-				oldLastTrade = cd.getWebOrderBook().getData().getLastTradePrice();
+				
 				
 				timer.start();
 			}
-			cd.getWebOrderBook().getTc().unlock();
+			
 			
 			if (selling){
 				
@@ -415,8 +413,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						else if (cd.getBuyLimit().getErrCode() == 21){				//Insufficient funds to place buy order
 							
 							//Check if any new sales
-							cd.getWebOrderBook().getTc().lock();
-							
 							System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Checking for new sales..." );
 												
 							cd.getUserTransactions().refreshData();
@@ -454,9 +450,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							Messages.maxBidTimer(cd, atMaxBidTimer);
 							Messages.getBalances(cd);
 							System.out.println();
-							oldLastTrade = cd.getWebOrderBook().getData().getLastTradePrice();
-							
-							cd.getWebOrderBook().getTc().unlock();
 							
 							Bot.checkAndCancelOpenBuys(cd);
 							cd.getRuntimeData().setCurrentBuyOrder(new OrderResult());

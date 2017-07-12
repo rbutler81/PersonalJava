@@ -189,6 +189,8 @@ public class WebOrderBook {
 		BigDecimal c = null;
 		int i = 0;
 		
+		tc.lock();
+		
 		while (!found && (i < data.getAsks().size())){
 			c = new BigDecimal(data.getAsks().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
 			if ((BigDec.GT(c, val)) && !BigDec.EQ(c, not)){
@@ -199,7 +201,10 @@ public class WebOrderBook {
 			}
 		}
 		
-		if (i == data.getAsks().size()) return val;
+		if (i == data.getAsks().size()) c = val;
+		
+		tc.unlock();
+		
 		return c;
 	}
 	
@@ -207,6 +212,8 @@ public class WebOrderBook {
 		boolean found = false;
 		BigDecimal c = null;
 		int i = 0;
+		
+		tc.lock();
 		
 		while (!found && (i < data.getBids().size())){
 			c = new BigDecimal(data.getBids().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
@@ -218,8 +225,19 @@ public class WebOrderBook {
 			}
 		}
 		
-		if (i == data.getBids().size()) return val;
-		else return c;
+		if (i == data.getBids().size()) c = val;
+		
+		tc.unlock();
+		
+		return c;
+	}
+	
+	public boolean atMaxBid(String dbp){
+		BigDecimal dbpBD = new BigDecimal(dbp).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+		tc.lock();
+		BigDecimal highBid = new BigDecimal(bidList.get(0).getPrice()).setScale(dbpBD.scale(), RoundingMode.DOWN);
+		tc.unlock();
+		return BigDec.GE(highBid, dbpBD);
 	}
 	
 	public String getSpread(){

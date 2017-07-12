@@ -146,8 +146,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				if (selling){
 				
 					cd.getWebOrderBook().getTc().lock();
-					cd.getRuntimeData().setNewAskPrice(Bot.optimizeBidWebData(cd.getRuntimeData().getCurrentSellOrder()
-							, cd.getRuntimeData().getRoundSells(), cd, true));
+					cd.getRuntimeData().setNewAskPrice(Bot.optimizeBidWebDataNew(cd.getRuntimeData().getCurrentSellOrder(), cd, true));
 					cd.getWebOrderBook().getTc().unlock();					
 				}
 				else if (!selling && !cd.getRuntimeData().getCurrentSellOrder().getPrice().equals("")){
@@ -159,18 +158,15 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				if (buying){
 					
 					cd.getWebOrderBook().getTc().lock();
-					cd.getRuntimeData().setNewBidPrice(Bot.optimizeBidWebData(cd.getRuntimeData().getCurrentBuyOrder()
-							, cd.getRuntimeData().getRoundSells(), cd, false));
+					cd.getRuntimeData().setNewBidPrice(Bot.optimizeBidWebDataNew(cd.getRuntimeData().getCurrentBuyOrder(), cd, false));
 					cd.getWebOrderBook().getTc().unlock();
 					
 					//Check max bid timer
-					if (cd.getBotParams().getDontBuyPast().equals(cd.getRuntimeData().getCurrentBuyOrder().getPrice())
-							&& !atMaxBidTimer.isStarted() && !selling){
+					if (cd.getWebOrderBook().atMaxBid(cd.getBotParams().getDontBuyPast()) && !atMaxBidTimer.isStarted() && !selling){
 						
 						atMaxBidTimer.start();
 					}
-					else if (!cd.getBotParams().getDontBuyPast().equals(cd.getRuntimeData().getCurrentBuyOrder().getPrice())
-							&& atMaxBidTimer.isStarted()){
+					else if (!cd.getWebOrderBook().atMaxBid(cd.getBotParams().getDontBuyPast()) && atMaxBidTimer.isStarted()){
 						
 						atMaxBidTimer.stop();
 					}
@@ -320,8 +316,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						cd.getRl().waitTurn();
 						
 						cd.getWebOrderBook().getTc().lock();
-						cd.getRuntimeData().setNewAskPrice(Bot.optimizeBidWebData(cd.getRuntimeData().getCurrentSellOrder()
-								, cd.getRuntimeData().getRoundSells(), cd, true));
+						cd.getRuntimeData().setNewAskPrice(Bot.optimizeBidWebDataNew(cd.getRuntimeData().getCurrentSellOrder(), cd, true));
 						cd.getWebOrderBook().getTc().unlock();	
 						
 						if (cd.getSellLimit().sellNow(cd.getRuntimeData().getNewAskPrice(), leftToSell.toString(), cd.getRuntimeData().getBook())){
@@ -397,8 +392,7 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 						cd.getRl().waitTurn();
 						
 						cd.getWebOrderBook().getTc().lock();
-						cd.getRuntimeData().setNewBidPrice(Bot.optimizeBidWebData(cd.getRuntimeData().getCurrentBuyOrder()
-								, cd.getRuntimeData().getRoundSells(), cd, false));
+						cd.getRuntimeData().setNewBidPrice(Bot.optimizeBidWebDataNew(cd.getRuntimeData().getCurrentBuyOrder(), cd, false));
 						cd.getWebOrderBook().getTc().unlock();	
 						
 						if (cd.getBuyLimit().buyVolumeInMinorNow(cd.getRuntimeData().getNewBidPrice()

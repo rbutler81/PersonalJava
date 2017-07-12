@@ -1,5 +1,8 @@
 package com.quadrigacx.api.returnJson.helpers;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class OrderResult {
 
 	private String id;
@@ -62,6 +65,10 @@ public class OrderResult {
 
 	public String getPrice() {
 		return price;
+	}
+	
+	public BigDecimal getPriceBigDec(int scale){
+		return new BigDecimal(price).setScale(scale, RoundingMode.DOWN);
 	}
 
 	public void setPrice(String price) {

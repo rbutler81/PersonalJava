@@ -16,6 +16,7 @@ public class WebOrderBookGetter extends GenericThread implements Runnable{
 			} catch (Exception e){
 				e.printStackTrace();
 			}
+		
 		}
 	}
 }

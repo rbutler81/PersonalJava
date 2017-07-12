@@ -12,8 +12,10 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import com.quadrigacx.api.returnJson.helpers.GetCoinType;
+import com.quadrigacx.api.returnJson.helpers.OrderResult;
 import com.quadrigacx.exchange.threads.ThreadControl;
 
+import helpers.BigDec;
 import helpers.Time;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.PriceAmount;
@@ -30,14 +32,20 @@ public class WebOrderBook {
 	private List<PriceAmount> askList = new ArrayList<PriceAmount>();
 	private List<PriceAmount> bidList = new ArrayList<PriceAmount>();
 	private String lastTradePrice = "";
-	private String lastTradeTime = "";
-	private String oldLastTradeTime = "";
 	private WebOrderBookData data;
+	private CoinType minor = null;
+	private CoinType major = null;
 	
+	private static final int ORDER_BOOK_ENTRIES = 30;
+	
+	public WebOrderBookData getData() {
+		return data;
+	}
+
 	public WebOrderBook(String book){
 		
-		CoinType minor = GetCoinType.getMinor(book);
-		CoinType major = GetCoinType.getMajor(book);
+		this.minor = GetCoinType.getMinor(book);
+		this.major = GetCoinType.getMajor(book);
 		url = "https://www.quadrigacx.com/trade/" + major.getSmallName() + "/" + minor.getSmallName();
 		
 		try {
@@ -119,18 +127,132 @@ public class WebOrderBook {
 	}
 	
 	private String findNextValue(int i){
-		
 		index = findNextNumber(i);
 		return getNumberAsString(index);
-		
 	}
 	
 	public String getLowAsk(){
 		return data.getAsks().get(0).getPrice();
 	}
 	
+	public BigDecimal getLowAskPriceBigDec(){
+		return new BigDecimal(data.getAsks().get(0).getPrice()).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
+	public BigDecimal getLowAskAmountBigDec(){
+		return new BigDecimal(data.getAsks().get(0).getAmount()).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
 	public String getHighBid(){
 		return data.getBids().get(0).getPrice();
+	}
+	
+	public BigDecimal getHighBidPriceBigDec(){
+		return new BigDecimal(data.getBids().get(0).getPrice()).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
+	public BigDecimal getHighBidAmountBigDec(){
+		return new BigDecimal(data.getBids().get(0).getAmount()).setScale(major.getDecimalPlaces(), RoundingMode.DOWN);
+	}
+	
+	public int getMyAskRank(OrderResult or){
+		
+		tc.lock();
+		
+		boolean orderFound = false;
+		int i = 0;
+		while (!orderFound || (i < ORDER_BOOK_ENTRIES)){
+			if (data.getAsks().get(i).getPrice().equals(or.getPrice())){
+				if (data.getAsks().get(i).getAmount().equals(or.getAmount())){
+					orderFound = true;
+				}
+				else i++;
+			}
+			else i++;
+		}
+		
+		tc.unlock();
+		
+		if (orderFound) return i;
+		else return -1;
+	}
+	
+	public int getMyBidRank(OrderResult or){
+		
+		tc.lock();
+		
+		boolean orderFound = false;
+		int i = 0;
+		while (!orderFound || (i < ORDER_BOOK_ENTRIES)){
+			if (data.getBids().get(i).getPrice().equals(or.getPrice())){
+				if (data.getBids().get(i).getAmount().equals(or.getAmount())){
+					orderFound = true;
+				}
+				else i++;
+			}
+			else i++;
+		}
+		
+		tc.unlock();
+		
+		if (orderFound) return i;
+		else return -1;
+	}
+	
+	public BigDecimal findFirstAskHigherThan(BigDecimal val, BigDecimal not){
+		boolean found = false;
+		BigDecimal c = null;
+		int i = 0;
+		
+		tc.lock();
+		
+		while (!found && (i < data.getAsks().size())){
+			c = new BigDecimal(data.getAsks().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
+			if ((BigDec.GT(c, val)) && !BigDec.EQ(c, not)){
+				found = true;
+			}
+			else{
+				i++;
+			}
+		}
+		
+		if (i == data.getAsks().size()) c = val;
+		
+		tc.unlock();
+		
+		return c;
+	}
+	
+	public BigDecimal findFirstBidLowerThan(BigDecimal val, BigDecimal not){
+		boolean found = false;
+		BigDecimal c = null;
+		int i = 0;
+		
+		tc.lock();
+		
+		while (!found && (i < data.getBids().size())){
+			c = new BigDecimal(data.getBids().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
+			if ((BigDec.LT(c, val)) && !BigDec.EQ(c, not)){
+				found = true;
+			}
+			else{
+				i++;
+			}
+		}
+		
+		if (i == data.getBids().size()) c = val;
+		
+		tc.unlock();
+		
+		return c;
+	}
+	
+	public boolean atMaxBid(String dbp){
+		BigDecimal dbpBD = new BigDecimal(dbp).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+		tc.lock();
+		BigDecimal highBid = new BigDecimal(bidList.get(0).getPrice()).setScale(dbpBD.scale(), RoundingMode.DOWN);
+		tc.unlock();
+		return BigDec.GE(highBid, dbpBD);
 	}
 	
 	public String getSpread(){
@@ -156,7 +278,7 @@ public class WebOrderBook {
 		index = pageData.indexOf("<td>", index);
 		askRawData.clear();
 		
-		while (askRawData.size() < 30){
+		while (askRawData.size() < ORDER_BOOK_ENTRIES){
 			askRawData.add(findNextValue(index));
 			index = pageData.indexOf("<td>", index);
 		}
@@ -179,7 +301,7 @@ private void getLastTradeTime(){
 		
 		int i = 0;
 				
-		while (askList.size() < 10){
+		while (askList.size() < (ORDER_BOOK_ENTRIES / 3)){
 		
 			askList.add(new PriceAmount(askRawData.get(i), askRawData.get(i + 1)));
 			bidList.add(new PriceAmount(bidRawData.get(i), bidRawData.get(i + 1)));
@@ -194,7 +316,7 @@ private void getLastTradeTime(){
 		index = pageData.indexOf("<td>", index);
 		bidRawData.clear();
 		
-		while (bidRawData.size() < 30){
+		while (bidRawData.size() < ORDER_BOOK_ENTRIES){
 			bidRawData.add(findNextValue(index));
 			index = pageData.indexOf("<td>", index);
 		}
@@ -206,7 +328,7 @@ private void getLastTradeTime(){
 		pageData = "";
 		
 		connectAndGet();
-				
+		
 		if (pageData.length() > 0){
 			
 			tc.lock();
@@ -230,7 +352,6 @@ private void getLastTradeTime(){
 			data = new WebOrderBookData(askList, bidList, lastTradePrice, lastTradeTime);
 			
 			tc.unlock();
-			
 		}
 		
 	}

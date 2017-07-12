@@ -135,6 +135,10 @@ public class BotParams {
 	public void setDontBuyPast(String dontBuyPast) {
 		this.dontBuyPast = dontBuyPast;
 	}
+	
+	public BigDecimal getDontBuyPastBigDec(){
+		return new BigDecimal(dontBuyPast).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+	}
 
 	public String getMinDesiredProfit() {
 		return minDesiredProfit;

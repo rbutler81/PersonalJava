@@ -161,7 +161,7 @@ public class Bot {
 		if (or.getPrice().equals("")){
 			if (sell){
 				
-				or.setPrice("999999999");
+				or.setPrice("99999999");
 			}
 			else if (!sell){
 			

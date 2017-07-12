@@ -331,6 +331,10 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 							Messages.getBalances(cd);
 							System.out.println();
 						}
+						else{									//if order returns error, check and cancel any open sell orders 
+							Bot.checkAndCancelOpenSells(cd);
+							cd.getRuntimeData().setCurrentSellOrder(new OrderResult());
+						}
 					}
 				}
 			}

@@ -12,6 +12,7 @@ import com.quadrigacx.api.QuadrigaMethods;
 
 import helpers.KeyValuePair;
 import helpers.RateLimiter;
+import helpers.Time;
 
 public class QuadrigaCall {
 
@@ -97,7 +98,9 @@ public class QuadrigaCall {
 				}
 			
 			} catch (Exception e) {
-				System.out.println(Thread.currentThread().getName() + " Response returned string of " + result.length() + " : " + result);
+				System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": Response returned string of " + 
+						result.length() + " : " + result);
+				System.out.println();
 				hasData = false;
 				r = oldR;
 				oldR = null;
@@ -109,12 +112,15 @@ public class QuadrigaCall {
 			} 
 			else if (r.getErrorResponse().getErrCode() != 200){
 				success = true;
-				System.out.println(Thread.currentThread().getName() + " errCode: " + r.getErrorResponse().getErrCode() + " : " + 
-						r.getErrorResponse().getErrMessage());
+				System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() + ": errCode: " + r.getErrorResponse().getErrCode() 
+						+ " : " + r.getErrorResponse().getErrMessage());
+				System.out.println();
 			}
 			else {
 				try {
-					System.out.println(Thread.currentThread().getName() + " : Too many calls, trying again in 5 seconds...");
+					System.out.println(Time.getDateTimeStamp() + " " + Thread.currentThread().getName() +
+							": : Too many calls, trying again in 5 seconds...");
+					System.out.println();
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();

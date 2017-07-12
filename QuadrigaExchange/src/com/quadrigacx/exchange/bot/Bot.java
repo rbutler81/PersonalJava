@@ -157,8 +157,7 @@ public class Bot {
 		CoinType minor = GetCoinType.getMinor(cd.getOrderBook().getBook());
 		
 		// *** Setup variables needed in calculations
-		//Zero
-		BigDecimal zero = new BigDecimal("0.0").setScale(0, RoundingMode.DOWN);		
+		
 		//My current buy or sell price
 		if (or.getPrice().equals("")){
 			if (sell){

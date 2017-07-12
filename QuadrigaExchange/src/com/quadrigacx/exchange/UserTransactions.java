@@ -274,6 +274,7 @@ public class UserTransactions extends QuadrigaCall{
 								
 								if (cd.getBotParams().isAutoAmount()){
 									
+									if (cd.getBotParams().isFirstRoundSellDiff()) cd.getBotParams().setFirstRoundSellDiff(false);
 									amountToUse = new BigDecimal(Bot.calcAskAmount(cd)).setScale(major.getDecimalPlaces(), 
 											RoundingMode.DOWN);
 									cd.getBotParams().setAmountToUse(amountToUse.toString());

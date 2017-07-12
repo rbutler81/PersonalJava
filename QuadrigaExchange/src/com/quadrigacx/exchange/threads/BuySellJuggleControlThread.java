@@ -72,8 +72,19 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 			System.out.println("Will wait " + Time.convertMilliToHMS(atMaxBidTimer.getInterval()) + " before selling more");
 			System.out.println();
 			
-			cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
-			cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+			System.out.println("Sell a different amount for the first round? (y/n)");
+			if (Console.getConsole().equals("y")){
+				System.out.println();
+				cd.getBotParams().setFirstRoundSellDiff(true);
+				System.out.println("Amount of " + cd.getRuntimeData().getMajor().getName() + " to sell in the first round: ");
+				cd.getBotParams().setAmountToUse(Console.getConsole());
+				cd.getBotParams().setAmountToUseOriginal(Bot.calcAskAmount(cd));
+				System.out.println();
+			}
+			else{
+				cd.getBotParams().setAmountToUse(Bot.calcAskAmount(cd));
+				cd.getBotParams().setAmountToUseOriginal(cd.getBotParams().getAmountToUse());
+			}
 		}
 		
 		System.out.println("Start with a balance of " + cd.getRuntimeData().getMinor().getName() + " ? (y/n)");
@@ -108,11 +119,6 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 		cd.getUserTransactions().setMajorRoundBalance(new Coin(cd.getRuntimeData().getMajor()
 				, Double.parseDouble(cd.getBotParams().getAmountToUse())));
 		
-		System.out.println();
-		System.out.println("Getting Order Book... ");
-		System.out.println();
-		cd.getOrderBook().refreshData();
-
 		System.out.println("Getting User Transactions... ");
 		System.out.println();
 		cd.getUserTransactions().refreshData();
@@ -196,7 +202,9 @@ public class BuySellJuggleControlThread extends GenericThread implements Runnabl
 				BigDecimal atuo = new BigDecimal(cd.getBotParams().getAmountToUseOriginal()).setScale(cd.getRuntimeData()
 						.getMajor().getDecimalPlaces(), RoundingMode.DOWN);
 				
-				atu = atu.add(atuo);
+				if (!cd.getBotParams().isFirstRoundSellDiff()) atu = atu.add(atuo);
+				else atu = atuo.add(atuo);
+				
 				cd.getBotParams().setAmountToUse(remainingBalance.add(atu).toString());
 				
 				cd.getUserTransactions().getMajorRoundBalance().setValue(

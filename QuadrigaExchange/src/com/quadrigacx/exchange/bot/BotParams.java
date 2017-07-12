@@ -21,6 +21,7 @@ public class BotParams {
 	private String fractionToSell = "";
 	private String daysToLast = "";
 	private boolean autoAmount = false;
+	private boolean firstRoundDiffSell = false;
 	private CoinType major;
 	private CoinType minor;
 	private boolean raisedSellLimit = false;
@@ -31,6 +32,13 @@ public class BotParams {
 		minor = GetCoinType.getMinor(book);
 	}
 	
+	public void setFirstRoundSellDiff(boolean i){
+		this.firstRoundDiffSell = i;
+	}
+	
+	public boolean isFirstRoundSellDiff(){
+		return this.firstRoundDiffSell;
+	}
 	
 	public String getFractionToSell() {
 		return fractionToSell;

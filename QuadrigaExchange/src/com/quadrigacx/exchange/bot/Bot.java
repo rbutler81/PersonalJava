@@ -209,7 +209,7 @@ public class Bot {
 				BigDecimal i = cd.getWebOrderBook().findFirstAskHigherThan(dontSellLess, myBid);
 				return bidOneLess(minor, i).toString();
 			}
-			else return "9999";
+			else return "99999";
 		}
 		else{												//Bid Order
 			
@@ -235,6 +235,24 @@ public class Bot {
 			boolean B = myBid_EQ_DBP(dontBuyPast, or.getPrice());
 			boolean C = myBid_LT_DBP(dontBuyPast, or.getPrice());
 			boolean D = myBid_EQ_HighBid(or.getPrice(), cd.getWebOrderBook().getData().getBids(), amountsMatch, minor);
+			
+			//Decide which possible bid direction to make
+			boolean bidHigher = (!B && C && !D);
+			boolean bidLowerOrSame = (A && B && !C) || (!A && !B && C && D) || (A && !B && C && !D);
+			
+			//Look into cases to see which bid direction to make
+			if (bidHigher && !bidLowerOrSame){
+				return bidOneMore(minor, highBid).toString();				//out bid the lowest ask
+			}
+			else if (!bidHigher && bidLowerOrSame){
+				BigDecimal i = cd.getWebOrderBook().findFirstBidLowerThan(dontBuyPast, myBid);
+				return bidOneMore(minor, i).toString();
+			}
+			else if (bidHigher && bidLowerOrSame){
+				BigDecimal i = cd.getWebOrderBook().findFirstBidLowerThan(dontBuyPast, myBid);
+				return bidOneMore(minor, i).toString();
+			}
+			else return minor.getMinDenom();
 		}
 	}
 	

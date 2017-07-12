@@ -189,7 +189,7 @@ public class WebOrderBook {
 		BigDecimal c = null;
 		int i = 0;
 		
-		while (!found){
+		while (!found && (i < data.getAsks().size())){
 			c = new BigDecimal(data.getAsks().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
 			if ((BigDec.GT(c, val)) && !BigDec.EQ(c, not)){
 				found = true;
@@ -198,7 +198,28 @@ public class WebOrderBook {
 				i++;
 			}
 		}
+		
+		if (i == data.getAsks().size()) return val;
 		return c;
+	}
+	
+	public BigDecimal findFirstBidLowerThan(BigDecimal val, BigDecimal not){
+		boolean found = false;
+		BigDecimal c = null;
+		int i = 0;
+		
+		while (!found && (i < data.getBids().size())){
+			c = new BigDecimal(data.getBids().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
+			if ((BigDec.LT(c, val)) && !BigDec.EQ(c, not)){
+				found = true;
+			}
+			else{
+				i++;
+			}
+		}
+		
+		if (i == data.getBids().size()) return val;
+		else return c;
 	}
 	
 	public String getSpread(){

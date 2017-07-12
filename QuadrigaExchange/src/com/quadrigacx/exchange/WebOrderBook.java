@@ -32,16 +32,14 @@ public class WebOrderBook {
 	private List<PriceAmount> askList = new ArrayList<PriceAmount>();
 	private List<PriceAmount> bidList = new ArrayList<PriceAmount>();
 	private String lastTradePrice = "";
+	private String lastTradeTime = "";
+	private String oldLastTradeTime = "";
 	private WebOrderBookData data;
 	private CoinType minor = null;
 	private CoinType major = null;
 	
 	private static final int ORDER_BOOK_ENTRIES = 30;
 	
-	public WebOrderBookData getData() {
-		return data;
-	}
-
 	public WebOrderBook(String book){
 		
 		this.minor = GetCoinType.getMinor(book);

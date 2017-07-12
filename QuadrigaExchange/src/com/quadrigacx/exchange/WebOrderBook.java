@@ -15,6 +15,7 @@ import com.quadrigacx.api.returnJson.helpers.GetCoinType;
 import com.quadrigacx.api.returnJson.helpers.OrderResult;
 import com.quadrigacx.exchange.threads.ThreadControl;
 
+import helpers.BigDec;
 import helpers.Time;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.PriceAmount;
@@ -35,7 +36,7 @@ public class WebOrderBook {
 	private CoinType minor = null;
 	private CoinType major = null;
 	
-	private static final int ORDER_BOOK_ENTRIES = 20;
+	private static final int ORDER_BOOK_ENTRIES = 30;
 	
 	public WebOrderBookData getData() {
 		return data;
@@ -183,6 +184,23 @@ public class WebOrderBook {
 		else return -1;
 	}
 	
+	public BigDecimal findFirstAskHigherThan(BigDecimal val, BigDecimal not){
+		boolean found = false;
+		BigDecimal c = null;
+		int i = 0;
+		
+		while (!found){
+			c = new BigDecimal(data.getAsks().get(i).getPrice()).setScale(val.scale(), RoundingMode.DOWN);
+			if ((BigDec.GT(c, val)) && !BigDec.EQ(c, not)){
+				found = true;
+			}
+			else{
+				i++;
+			}
+		}
+		return c;
+	}
+	
 	public String getSpread(){
 		
 		tc.lock();
@@ -223,7 +241,7 @@ public class WebOrderBook {
 		
 		int i = 0;
 				
-		while (askList.size() < ORDER_BOOK_ENTRIES){
+		while (askList.size() < (ORDER_BOOK_ENTRIES / 3)){
 		
 			askList.add(new PriceAmount(askRawData.get(i), askRawData.get(i + 1)));
 			bidList.add(new PriceAmount(bidRawData.get(i), bidRawData.get(i + 1)));

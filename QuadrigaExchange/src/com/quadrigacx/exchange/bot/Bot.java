@@ -195,16 +195,68 @@ public class Bot {
 			
 			//Decide which possible bid direction to make
 			boolean bidLower = (!B && C && !D);
-			boolean bidHigherOrSame = (B && !C && D) || (A && B && !C) || (!A && !B && C && D) || (A && !B && C && !D);
+			boolean bidHigherOrSame = (A && B && !C) || (!A && !B && C && D) || (A && !B && C && !D);
 			
 			//Look into cases to see which bid direction to make
 			if (bidLower && !bidHigherOrSame){
 				return bidOneLess(minor, lowAsk).toString();				//out bid the lowest ask
 			}
 			else if (!bidLower && bidHigherOrSame){
-				
+				BigDecimal i = cd.getWebOrderBook().findFirstAskHigherThan(dontSellLess, myBid);
+				return bidOneLess(minor, i).toString();
 			}
+			else if (bidLower && bidHigherOrSame){
+				BigDecimal i = cd.getWebOrderBook().findFirstAskHigherThan(dontSellLess, myBid);
+				return bidOneLess(minor, i).toString();
+			}
+			else return "9999";
 		}
+		else{												//Bid Order
+			
+			//My current volume weighted average sell price
+			BigDecimal avgSellPrice = new BigDecimal(cd.getRuntimeData().getRoundSells().getAvgPriceString())
+					.setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+			//Determine the current "don't buy higher than" price
+			BigDecimal dontBuyPast = avgSellPrice.multiply(new BigDecimal("100").setScale(0, RoundingMode.DOWN));
+			BigDecimal dontBuyPastDenom = desiredSpread.add(new BigDecimal("100").setScale(0, RoundingMode.DOWN));
+			dontBuyPast = dontBuyPast.divide(dontBuyPastDenom, minor.getDecimalPlaces(), RoundingMode.DOWN);
+			
+			cd.getBotParams().getTc().lock();
+			cd.getBotParams().setDontBuyPast(dontBuyPast.toString());
+			cd.getBotParams().getTc().unlock();
+			
+			//Check to see if I'm the highest bid
+			BigDecimal highBid = new BigDecimal(cd.getWebOrderBook().getData().getBids().get(0).getPrice())
+					.setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+			boolean amountsMatch = cd.getWebOrderBook().getData().getBids().get(0).getAmount().equals(or.getAmount());
+			
+			//Evaluate conditions to make a decision
+			boolean A = anyBid_GE_DBP(dontBuyPast, cd.getWebOrderBook().getData().getBids());
+			boolean B = myBid_EQ_DBP(dontBuyPast, or.getPrice());
+			boolean C = myBid_LT_DBP(dontBuyPast, or.getPrice());
+			boolean D = myBid_EQ_HighBid(or.getPrice(), cd.getWebOrderBook().getData().getBids(), amountsMatch, minor);
+		}
+	}
+	
+	private static boolean anyBid_GE_DBP(BigDecimal dbp, List<PriceAmount> bids){
+		BigDecimal highBid = new BigDecimal(bids.get(0).getPrice()).setScale(dbp.scale(), RoundingMode.DOWN);
+		return BigDec.GE(highBid, dbp);
+	}
+	
+	private static boolean myBid_EQ_DBP(BigDecimal dbp, String myBid){
+		BigDecimal myBidBD = new BigDecimal(myBid).setScale(dbp.scale(), RoundingMode.DOWN);
+		return BigDec.EQ(myBidBD, dbp);
+	}
+	
+	private static boolean myBid_LT_DBP(BigDecimal dbp, String myBid){
+		BigDecimal myBidBD = new BigDecimal(myBid).setScale(dbp.scale(), RoundingMode.DOWN);
+		return BigDec.LT(myBidBD, dbp);
+	}
+	
+	private static boolean myBid_EQ_HighBid(String myBid, List<PriceAmount> bids, boolean amountsMatch, CoinType minor){
+		BigDecimal myBidBD = new BigDecimal(myBid).setScale(minor.getDecimalPlaces(), RoundingMode.DOWN);
+		BigDecimal highBid = new BigDecimal(bids.get(0).getPrice()).setScale(myBidBD.scale(), RoundingMode.DOWN);
+		return (BigDec.EQ(myBidBD, highBid) && amountsMatch);
 	}
 	
 	private static boolean anyAsk_LE_DSL(BigDecimal dsl, List<PriceAmount> asks){

@@ -17,7 +17,7 @@ public class QuadrigaApi {
 
 	protected static boolean debug = false;
 	
-	protected static String client = "xxx";
+	protected static String client = "xxxx";
 	protected static String apiKey = "xxxx";
 	protected static String apiSecret = "xxxx";
 		
@@ -112,8 +112,9 @@ public class QuadrigaApi {
 	        
 	        br = new BufferedReader(new InputStreamReader((c.getInputStream())));
 	        String line;
-	        while ((line = br.readLine()) != null)
-	            jsonResponse += line;
+	        while ((line = br.readLine()) != null) jsonResponse += line;
+	        if (debug) System.out.println(jsonResponse);
+	        
 	    } catch (Exception e) {
 	    	if (debug) System.out.println("post() Exception: " + e);
 	    } finally {

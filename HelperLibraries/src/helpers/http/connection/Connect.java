@@ -14,8 +14,8 @@ public class Connect {
 	    try {
 	        URL u = new URL("https://" + address); 
 	        c = (HttpsURLConnection)u.openConnection();
-	        c.setConnectTimeout(10000);
-	        c.setReadTimeout(15000);
+	        c.setConnectTimeout(60000);
+	        c.setReadTimeout(60000);
 	        c.setRequestMethod("GET");
 	        c.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 	        

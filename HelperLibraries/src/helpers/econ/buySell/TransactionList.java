@@ -1,4 +1,4 @@
-package helpers.econ.buysell;
+package helpers.econ.buySell;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

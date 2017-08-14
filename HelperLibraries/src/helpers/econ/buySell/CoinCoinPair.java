@@ -1,4 +1,4 @@
-package helpers.econ.buysell;
+package helpers.econ.buySell;
 
 import helpers.econ.currency.Coin;
 

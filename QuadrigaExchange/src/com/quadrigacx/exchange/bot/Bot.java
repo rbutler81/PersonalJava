@@ -9,7 +9,7 @@ import com.quadrigacx.api.returnJson.helpers.OrderResult;
 import com.quadrigacx.exchange.threads.CommonData;
 
 import helpers.BigDec;
-import helpers.econ.buysell.TransactionList;
+import helpers.econ.buySell.TransactionList;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.PriceAmount;
 

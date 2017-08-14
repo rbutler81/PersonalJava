@@ -12,7 +12,7 @@ public class DatePrice implements CSVWriter{
 
 	private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	
-	private long dateTime;
+	private double dateTime;
 	private BigDecimal price;
 	
 	
@@ -20,19 +20,19 @@ public class DatePrice implements CSVWriter{
 		Date d = new Date();
 		try { d = format.parse(dateTime);  
 		} catch (ParseException e) {}
-		this.dateTime = d.getTime() / 1000L;
+		this.dateTime = d.getTime() / 1000.0 / 60.0 / 60.0;
 		this.price = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
 	}
 	
 	public DatePrice() {}
 
-	public long getDateTime() { return dateTime; }
+	public double getDateTime() { return dateTime; }
 
 	public void setDateTime(String dateTime) { 
 		Date d = new Date();
 		try { d = format.parse(dateTime);  
 		} catch (ParseException e) {}
-		this.dateTime = d.getTime() / 1000L;
+		this.dateTime = d.getTime() / 1000.0 / 60.0 / 60.0;
 	}
 
 	public BigDecimal getPrice() { return price; }
@@ -52,7 +52,7 @@ public class DatePrice implements CSVWriter{
 			r.add(new String[] {"time", "price"});
 			
 			for (DatePrice e : a) {
-				r.add(new String[] {Long.toString(e.getDateTime()), e.getPrice().toString()});
+				r.add(new String[] {Double.toString(e.getDateTime()), e.getPrice().toString()});
 			}
 		}
 		return r;

@@ -14,7 +14,7 @@ import com.quadrigacx.exchange.threads.CommonData;
 
 import helpers.KeyValuePair;
 import helpers.RateLimiter;
-import helpers.econ.buysell.TransactionList;
+import helpers.econ.buySell.TransactionList;
 import helpers.econ.currency.Coin;
 import helpers.econ.currency.CoinType;
 

@@ -4,7 +4,7 @@ import com.quadrigacx.api.returnJson.helpers.GetCoinType;
 import com.quadrigacx.api.returnJson.helpers.OrderResult;
 import com.quadrigacx.exchange.threads.ThreadControl;
 
-import helpers.econ.buysell.TransactionList;
+import helpers.econ.buySell.TransactionList;
 import helpers.econ.currency.CoinType;
 
 public class RuntimeData {

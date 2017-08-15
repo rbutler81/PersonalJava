@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -9,12 +11,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import helpers.BigDec;
 import helpers.csvUtil.CSVUtil;
+import helpers.econ.currency.BackCalcParam;
+import helpers.econ.currency.Coin;
+import helpers.econ.currency.CoinType;
+import helpers.econ.currency.Exchange;
 import helpers.http.connection.Connect;
 import helpers.math.DataPoint;
 
 public class Main {
 
 	static ObjectMapper mapper = new ObjectMapper();
+	
+	public static Predicate<DataPoint> buy() {
+		return p -> p.getAux().containsKey(1) && BigDec.LE(p.getAux().get(1), BigDec.valueOf(-10.00, 2));
+	}
+	
+	public static Predicate<DataPoint> sell() {
+		return p -> p.getAux().containsKey(1) && BigDec.GE(p.getAux().get(1), BigDec.valueOf(10.00, 2));
+	}
 	
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
 		
@@ -26,6 +40,7 @@ public class Main {
 		}
 		
 		dataList = DataPoint.removeDeltasLT(dataList, 0.5, 1);
+		DataPoint.calcDerivatives(dataList, 3);
 		
 		for (int i = 1; i < dataList.size(); i++) {
 			dataList.get(i).getAux().put(1, BigDec
@@ -37,11 +52,18 @@ public class Main {
 					.percentDiff(dataList.get(i - 24).getDataPoint(), dataList.get(i).getDataPoint()));
 		}
 		
+		CSVUtil.writeObject(dataList, "csvFiles/test.csv", ",");
 		
+		Double initVal = 1000.00;
+		Exchange ex = new Exchange(new Coin(CoinType.CAD, initVal), new Coin(CoinType.ETH, 0.0));
+		BackCalcParam param = new BackCalcParam();
+		param.setBuy(buy());
+		param.setSell(sell());
+		ex.backTest(dataList, param);
 		
-		dataList = DataPoint.removeDeltasLT(dataList, 0.5, 1);
-		DataPoint.calcDerivatives(dataList, 3);
-		CSVUtil.writeObject(dataList, "csvFiles/dailyPriceWPercent.csv", ",");
+		System.out.println();
+		System.out.println("Buy and hold: " + BigDec.valueOf(initVal, 2).divide(dataList.get(0).getDataPoint(), 8, RoundingMode.DOWN));
+		System.out.println("After trades: " + ex.getPrimary().getValue().toPlainString() + " " + ex.getSecondary().getValue().toPlainString());
 	}
 
 }

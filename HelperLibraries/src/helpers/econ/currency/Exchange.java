@@ -27,17 +27,19 @@ public class Exchange {
 	
 	public void buySecondary(BigDecimal amount, BigDecimal price) {
 		
-		if (BigDec.GE(primary.getValue(), amount.multiply(price))) {
+		if (BigDec.GE(primary.getValue(), amount.multiply(price)) && !BigDec.EQ(primary.getValue(), BigDec.zero())) {
 			primary.setValue(primary.getValue().subtract(amount.multiply(price)));
 			secondary.setValue(secondary.getValue().add(amount));
+			System.out.println("Buy! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString() + " " + price.toPlainString());
 		}
 	}
 	
 	public void sellSecondary(BigDecimal amount, BigDecimal price) {
 		
-		if (BigDec.GE(secondary.getValue(), amount)){
+		if (BigDec.GE(secondary.getValue(), amount) && !BigDec.EQ(secondary.getValue(), BigDec.zero())){
 			primary.setValue(primary.getValue().add(amount.multiply(price)));
 			secondary.setValue(secondary.getValue().subtract(amount));
+			System.out.println("Sell! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString() + " " + price.toPlainString());
 		}
 	}
 	
@@ -48,19 +50,17 @@ public class Exchange {
 		}
 	}
 	
-	public void backTest(List<DataPoint> dp, BackCalcParam p) {
+	public void backTest(List<DataPoint> dp, BackCalcParam param) {
 		
-		for (DataPoint e : dp) {
-			
-			if (p.getBuy().test(e) && !p.getSell().test(e)) {
-				buySecondaryByVolume(primary.getValue(), e.getDataPoint());
-				System.out.println("Buy! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString());
-			}
-			else if (!p.getBuy().test(e) && p.getSell().test(e)) {
-				sellSecondary(secondary.getValue(), e.getDataPoint());
-				System.out.println("Sell! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString());
-			}
-		}
+		dp.stream()
+			.forEach(e -> {
+				if (param.getBuy().test(e) && !param.getSell().test(e)) {
+					buySecondaryByVolume(primary.getValue(), e.getDataPoint());
+				}
+				else if (!param.getBuy().test(e) && param.getSell().test(e)) {
+					sellSecondary(secondary.getValue(), e.getDataPoint());
+				}
+			});
 	}
 	
 }

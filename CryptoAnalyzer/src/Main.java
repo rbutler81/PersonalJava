@@ -3,6 +3,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -15,6 +16,7 @@ import helpers.econ.currency.BackCalcParam;
 import helpers.econ.currency.Coin;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.Exchange;
+import helpers.evoAlg.EvoValue;
 import helpers.http.connection.Connect;
 import helpers.math.DataPoint;
 
@@ -23,16 +25,46 @@ public class Main {
 	static ObjectMapper mapper = new ObjectMapper();
 	
 	public static Predicate<DataPoint> buy() {
-		return p -> p.getAux().containsKey(1) && BigDec.LE(p.getAux().get(1), BigDec.valueOf(-10.00, 2));
+		return p -> p.getAux().containsKey(1) && BigDec.LE(p.getAux().get(1), BigDec.valueOf(-2.00, 2));
 	}
 	
 	public static Predicate<DataPoint> sell() {
-		return p -> p.getAux().containsKey(1) && BigDec.GE(p.getAux().get(1), BigDec.valueOf(10.00, 2));
+		return p -> p.getAux().containsKey(1) && BigDec.GE(p.getAux().get(1), BigDec.valueOf(2.0, 2));
 	}
 	
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
 		
-		DatePriceList dpl = mapper.readValue(Connect.httpsGet("etherchain.org/api/statistics/price", true), DatePriceList.class);
+		
+		
+		long count = 0;
+		Random rand = new Random();
+		boolean done = false;
+		List<EvoValue> l = new ArrayList<EvoValue>();
+		
+		while (!done) {
+			String bits = "";
+			int j = rand.nextInt(82);
+			for (int i = 0; i < j; i++) {
+				bits = bits + rand.nextInt(2);
+			}
+			EvoValue v = new EvoValue(bits);
+			if (v.isValid()) { 
+				count++; 
+				if (BigDec.LE(v.valueAsBigDec(), BigDec.valueOf(100)) && BigDec.GE(v.valueAsBigDec(), BigDec.valueOf(-100)) && !BigDec.EQ(v.valueAsBigDec(), BigDec.zero())) {
+					l.add(v);
+					if (l.size() == 100000) {
+						done = true;
+					}
+					System.out.println(v.valueAsBits() + " : " + v.valueAsBigDec().toPlainString());
+				}
+			}
+			else { count++; System.out.println(count); }
+		}
+			
+			
+			
+		
+		/*DatePriceList dpl = mapper.readValue(Connect.httpsGet("etherchain.org/api/statistics/price", true), DatePriceList.class);
 		
 		List<DataPoint> dataList = new ArrayList<DataPoint>();
 		for (DatePrice e : dpl.getData()) {
@@ -63,7 +95,7 @@ public class Main {
 		
 		System.out.println();
 		System.out.println("Buy and hold: " + BigDec.valueOf(initVal, 2).divide(dataList.get(0).getDataPoint(), 8, RoundingMode.DOWN));
-		System.out.println("After trades: " + ex.getPrimary().getValue().toPlainString() + " " + ex.getSecondary().getValue().toPlainString());
+		System.out.println("After trades: " + ex.getPrimary().getValue().toPlainString() + " " + ex.getSecondary().getValue().toPlainString());*/
 	}
 
 }

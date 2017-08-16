@@ -16,6 +16,7 @@ import helpers.econ.currency.BackCalcParam;
 import helpers.econ.currency.Coin;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.Exchange;
+import helpers.evoAlg.EvoGene;
 import helpers.evoAlg.EvoValue;
 import helpers.http.connection.Connect;
 import helpers.math.DataPoint;
@@ -30,39 +31,18 @@ public class Main {
 	
 	public static Predicate<DataPoint> sell() {
 		return p -> p.getAux().containsKey(1) && BigDec.GE(p.getAux().get(1), BigDec.valueOf(2.0, 2));
+		
 	}
+	
+	static Predicate<EvoValue> validPercent = p -> !BigDec.EQ(p.valueAsBigDec(), BigDec.zero()) 
+			&& BigDec.GE(p.valueAsBigDec(), BigDec.valueOf(-100)) && BigDec.LE(p.valueAsBigDec(), BigDec.valueOf(100));
+	
 	
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
 		
+		List<EvoValue> v = EvoValue.newValidPopulation(50, validPercent);
+		System.out.println();
 		
-		
-		long count = 0;
-		Random rand = new Random();
-		boolean done = false;
-		List<EvoValue> l = new ArrayList<EvoValue>();
-		
-		while (!done) {
-			String bits = "";
-			int j = rand.nextInt(82);
-			for (int i = 0; i < j; i++) {
-				bits = bits + rand.nextInt(2);
-			}
-			EvoValue v = new EvoValue(bits);
-			if (v.isValid()) { 
-				count++; 
-				if (BigDec.LE(v.valueAsBigDec(), BigDec.valueOf(100)) && BigDec.GE(v.valueAsBigDec(), BigDec.valueOf(-100)) && !BigDec.EQ(v.valueAsBigDec(), BigDec.zero())) {
-					l.add(v);
-					if (l.size() == 100000) {
-						done = true;
-					}
-					System.out.println(v.valueAsBits() + " : " + v.valueAsBigDec().toPlainString());
-				}
-			}
-			else { count++; System.out.println(count); }
-		}
-			
-			
-			
 		
 		/*DatePriceList dpl = mapper.readValue(Connect.httpsGet("etherchain.org/api/statistics/price", true), DatePriceList.class);
 		

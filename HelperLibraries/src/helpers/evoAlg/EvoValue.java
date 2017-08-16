@@ -7,19 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import helpers.BigDec;
 
-public class EvoValue {
+public class EvoValue extends EvoGene {
 
-	private String bits;
-	private boolean valid = false;
 	private float max;
 	private float min;
 	private int decimalPlaces;
 	private int numLeftOfDecMax;
 	private BigDecimal value;
-	
 	
 	public EvoValue(float max, float min, int decimalPlaces) {
 		this.max = max;
@@ -41,14 +39,11 @@ public class EvoValue {
 		decodeBits();
 	}
 
-	public String valueAsBits() { return bits; }
-	
 	public BigDecimal valueAsBigDec() { return value; }
 	
 	public float valueAsFloat() { return value.floatValue(); }
 	
-	public boolean isValid() { return valid; }
-	
+	//Privates
 	private void generateValue() {
 		
 		Random rand = new Random();
@@ -60,7 +55,6 @@ public class EvoValue {
 		
 		BigDecimal val = range.multiply(rnd);
 		value = val.add(BigDec.valueOf(min, decimalPlaces)).setScale(decimalPlaces, RoundingMode.HALF_EVEN);
-		
 	}
 	
 	private void encodeFromValue() {
@@ -90,9 +84,10 @@ public class EvoValue {
 		valid = true;
 	}
 	
-	private void decodeBits() {
+	protected void decodeBits() {
 		
 		valid = true;
+		value = BigDec.zero();
 		
 		BigDecimal[] mod = BigDec.valueOf(bits.length() - 1).divideAndRemainder(BigDec.valueOf(4));
 		if (!BigDec.EQ(mod[1], BigDec.zero())) valid = false;
@@ -156,43 +151,60 @@ public class EvoValue {
 		}
 	}
 
-	private int numLeftOfDecimal(float val) {
-		BigDecimal v = BigDec.valueOf(val, 1).abs();
-		int numLeftOfDec = 0;
-		while (BigDec.GE(v, BigDec.valueOf(1))) {
-			numLeftOfDec++;
-			v = v.divide(BigDec.valueOf(10), 1, RoundingMode.DOWN);
+	//Statics
+	public static EvoValue newInstance(int length) {
+		String bits = generateBits(length, true);
+		return new EvoValue(bits);
+	}
+	
+	public static EvoValue newInstance() {
+		Random rand = new Random();
+		String bits = generateBits(rand.nextInt(1001), false);
+		return new EvoValue(bits);
+	}
+	
+	public static EvoValue newValidInstance(int length) {
+		boolean done = false;
+		EvoValue v = new EvoValue("111");
+		while (!done) {
+			v = new EvoValue(generateBits(length, true));
+			done = v.isValid();
 		}
-		return numLeftOfDec;
+		return v;
 	}
 	
-	private String numberAsBits(int n) {
-		if (n == 0) return "0000";
-		else if (n == 1) return "0001";
-		else if (n == 2) return "0010";
-		else if (n == 3) return "0011";
-		else if (n == 4) return "0100";
-		else if (n == 5) return "0101";
-		else if (n == 6) return "0110";
-		else if (n == 7) return "0111";
-		else if (n == 8) return "1000";
-		else if (n == 9) return "1001";
-		else return "1111";
-		
+	public static EvoValue newValidInstance() {
+		boolean done = false;
+		EvoValue v = new EvoValue("111");
+		Random rand = new Random();
+		while (!done) {
+			v = new EvoValue(generateBits(rand.nextInt(1001), true));
+			done = v.isValid();
+		}
+		return v;
 	}
 	
-	private int bitsAsInt(String bits) {
-		if (bits.equals("0000")) return 0;
-		else if (bits.equals("0001")) return 1;
-		else if (bits.equals("0010")) return 2;
-		else if (bits.equals("0011")) return 3;
-		else if (bits.equals("0100")) return 4;
-		else if (bits.equals("0101")) return 5;
-		else if (bits.equals("0110")) return 6;
-		else if (bits.equals("0111")) return 7;
-		else if (bits.equals("1000")) return 8;
-		else if (bits.equals("1001")) return 9;
-		else return 10;
+	public static EvoValue newValidInstance(Predicate<EvoValue> p) {
+		boolean done = false;
+		EvoValue v = new EvoValue("111");
+		Random rand = new Random();
+		while (!done) {
+			v = new EvoValue(generateBits(rand.nextInt(1001), true));
+			done = v.isValid() && p.test(v);
+		}
+		return v;
 	}
 	
+	public static List<EvoValue> newValidPopulation(int size, Predicate<EvoValue> p) {
+		List<EvoValue> l = new ArrayList<EvoValue>();
+		while (l.size() < size) {
+			l.add(EvoValue.newValidInstance(p));
+			System.out.print("Population Size: " + l.size() + "\r");
+		}
+		return l;
+	}
+
+	//Abstracts
+	@Override
+	public boolean isValid() { return valid; }
 }

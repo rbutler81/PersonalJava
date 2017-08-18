@@ -19,6 +19,7 @@ import helpers.econ.currency.Exchange;
 import helpers.evoAlg.EvoGene;
 import helpers.evoAlg.EvoValue;
 import helpers.http.connection.Connect;
+import helpers.math.Chance;
 import helpers.math.DataPoint;
 
 public class Main {
@@ -40,8 +41,23 @@ public class Main {
 	
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
 		
-		List<EvoValue> v = EvoValue.newValidPopulation(50, validPercent);
+		List<EvoValue> parents = EvoValue.newValidPopulation(10, validPercent);
+		List<EvoValue> children = new ArrayList<EvoValue>();
+		for (int i = 0; i < parents.size() - 1; i++) {
+			children.add(EvoValue.breedAndMutateValidChild(parents.get(i), parents.get(i + 1), 0.01, validPercent));
+		}
 		System.out.println();
+		
+		/*while (true) {
+			EvoValue one = EvoValue.newValidInstance(validPercent);
+			EvoValue two = EvoValue.newValidInstance(validPercent);
+			System.out.println("One: " + one.valueAsBigDec().toPlainString() + " " + one.getBits());
+			System.out.println("Two: " + two.valueAsBigDec().toPlainString() + " " + two.getBits());
+			EvoValue v = EvoValue.breedAndMutateValidChild(one, two, 0.01, validPercent);
+			System.out.println("Child: " + v.valueAsBigDec().toPlainString() + " " + v.getBits());
+			System.out.println();
+		}*/
+		
 		
 		
 		/*DatePriceList dpl = mapper.readValue(Connect.httpsGet("etherchain.org/api/statistics/price", true), DatePriceList.class);

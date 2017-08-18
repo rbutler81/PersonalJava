@@ -33,4 +33,5 @@ public enum QuadrigaMethods {
 	public String getPath(){
 		return path;
 	}
+	
 }

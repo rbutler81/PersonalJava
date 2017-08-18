@@ -17,4 +17,9 @@ public class Chance {
 		else if (BigDec.GE(odds, result)) return true;
 		else return false;
 	}
+	
+	public static int intLT(int LT) {
+		Random rand = new Random();
+		return rand.nextInt(LT);
+	}
 }

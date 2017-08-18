@@ -3,8 +3,6 @@ package helpers.math;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import helpers.BigDec;
-
 public class CalcOps {
 
 	public static BigDecimal calcDerivative(BigDecimal t1, BigDecimal t2, BigDecimal v1, BigDecimal v2) {

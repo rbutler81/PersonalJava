@@ -15,23 +15,17 @@ import helpers.math.Chance;
 
 public class EvoValue extends EvoGene {
 
-	private float max;
-	private float min;
-	private int decimalPlaces;
-	private int numLeftOfDecMax;
 	private BigDecimal value;
+	private Predicate<EvoValue> p  = p -> true;
 	
 	public EvoValue(float max, float min, int decimalPlaces) {
-		this.max = max;
-		this.min = min;
-		this.decimalPlaces = decimalPlaces;
 		
-		numLeftOfDecMax = numLeftOfDecimal(max);
+		int numLeftOfDecMax = numLeftOfDecimal(max);
 		int numLeftOfDecMin = numLeftOfDecimal(min);
 		if (numLeftOfDecMin > numLeftOfDecMax) numLeftOfDecMax = numLeftOfDecMin;
 		
-		generateValue();
-		encodeFromValue();
+		generateValue(numLeftOfDecMax, decimalPlaces, max, min);
+		encodeFromValue(decimalPlaces);
 		decodeBits();
 	}
 	
@@ -42,12 +36,16 @@ public class EvoValue extends EvoGene {
 
 	public BigDecimal valueAsBigDec() { return value; }
 	
+	public EvoValue setPredicate(Predicate<EvoValue> p) { this.p = p; return this; }
+	
+	public Predicate<EvoValue> getPredicate() { return p; } 
+	
 	public float valueAsFloat() { return value.floatValue(); }
 	
 	public void setBits(String bits) { this.bits = bits; decodeBits(); }
 	
 	//Privates
-	private void generateValue() {
+	private void generateValue(int numLeftOfDecMax, int decimalPlaces, float max, float min) {
 		
 		Random rand = new Random();
 		
@@ -60,7 +58,7 @@ public class EvoValue extends EvoGene {
 		value = val.add(BigDec.valueOf(min, decimalPlaces)).setScale(decimalPlaces, RoundingMode.HALF_EVEN);
 	}
 	
-	private void encodeFromValue() {
+	private void encodeFromValue(int decimalPlaces) {
 		
 		if (BigDec.GE(value, BigDec.zero())) bits = "0";
 		else bits = "1";
@@ -189,7 +187,7 @@ public class EvoValue extends EvoGene {
 	
 	public static EvoValue newValidInstance() {
 		boolean done = false;
-		EvoValue v = new EvoValue("111");
+		EvoValue v = null;
 		Random rand = new Random();
 		while (!done) {
 			v = new EvoValue(generateBits(rand.nextInt(1001), true));
@@ -200,12 +198,14 @@ public class EvoValue extends EvoGene {
 	
 	public static EvoValue newValidInstance(Predicate<EvoValue> p) {
 		boolean done = false;
-		EvoValue v = new EvoValue("111");
+		EvoValue v = null;
 		Random rand = new Random();
 		while (!done) {
 			v = new EvoValue(generateBits(rand.nextInt(1001), true));
-			done = v.isValid() && p.test(v);
+			v.setPredicate(p);
+			done = v.isValid();
 		}
+		
 		return v;
 	}
 	
@@ -240,19 +240,18 @@ public class EvoValue extends EvoGene {
 		return child;
 	}
 	
-	public static EvoValue breedAndMutateValidChild(EvoValue one, EvoValue two, double chanceAsPercent, Predicate<EvoValue> p) {
+	public static EvoValue breedAndMutateValidChild(EvoValue one, EvoValue two, double chanceAsPercent) {
 		boolean valid = false;
 		EvoValue child = null;
 		while (!valid) {
 			child = breedAndMutate(one, two, chanceAsPercent);
-			valid = child.isValid() && p.test(child); 
+			valid = child.isValid();
 		}
 		return child;
 	}
 
 	public static EvoValue breed(EvoValue one, EvoValue two) {
 		
-		/*int childLength = 0;*/
 		String childBits = "";
 		String[] parent = new String[2];
 		boolean segmentsDetermined = false;
@@ -275,9 +274,9 @@ public class EvoValue extends EvoGene {
 		int parent1Seg = (parent[1].length() - 1) / 4;
 		int childSeg = 0;
 		
-		/*boolean childLikeParent0 = false;*/
-		if (Chance.percent(50)) { /*childLength = parent[0].length(); childLikeParent0 = true;*/ childSeg = parent0Seg; }
-		else { /*childLength = parent[1].length();*/ childSeg = parent1Seg; }
+		
+		if (Chance.percent(50)) { childSeg = parent0Seg; }
+		else { childSeg = parent1Seg; }
 		
 		boolean[] segments = new boolean[parent0Seg];
 		for (int i = 0; i < Array.getLength(segments); i++) {
@@ -328,10 +327,10 @@ public class EvoValue extends EvoGene {
 			i++;
 		}
 		
-		return new EvoValue(childBits);
+		return new EvoValue(childBits).setPredicate(one.getPredicate());
 	}
 
 	//Abstracts
 	@Override
-	public boolean isValid() { return valid; }
+	public boolean isValid() { return this.valid && p.test(this); }
 }

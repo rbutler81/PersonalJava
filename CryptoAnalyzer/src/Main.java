@@ -16,7 +16,10 @@ import helpers.econ.currency.BackCalcParam;
 import helpers.econ.currency.Coin;
 import helpers.econ.currency.CoinType;
 import helpers.econ.currency.Exchange;
+import helpers.evoAlg.EvoCompare;
 import helpers.evoAlg.EvoGene;
+import helpers.evoAlg.EvoParamSet;
+import helpers.evoAlg.EvoTest;
 import helpers.evoAlg.EvoValue;
 import helpers.http.connection.Connect;
 import helpers.math.Chance;
@@ -26,27 +29,42 @@ public class Main {
 
 	static ObjectMapper mapper = new ObjectMapper();
 	
-	public static Predicate<DataPoint> buy() {
-		return p -> p.getAux().containsKey(1) && BigDec.LE(p.getAux().get(1), BigDec.valueOf(-2.00, 2));
-	}
+	public Predicate<DataPoint> buy = p -> p.getAux().containsKey(1) && BigDec.LE(p.getAux().get(1), BigDec.valueOf(-2.00, 2));
 	
-	public static Predicate<DataPoint> sell() {
-		return p -> p.getAux().containsKey(1) && BigDec.GE(p.getAux().get(1), BigDec.valueOf(2.0, 2));
+	public Predicate<DataPoint> sell = p -> p.getAux().containsKey(1) && BigDec.GE(p.getAux().get(1), BigDec.valueOf(2.0, 2));
 		
-	}
-	
 	static Predicate<EvoValue> validPercent = p -> !BigDec.EQ(p.valueAsBigDec(), BigDec.zero()) 
 			&& BigDec.GE(p.valueAsBigDec(), BigDec.valueOf(-100)) && BigDec.LE(p.valueAsBigDec(), BigDec.valueOf(100));
 	
 	
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
 		
-		List<EvoValue> parents = EvoValue.newValidPopulation(10, validPercent);
-		List<EvoValue> children = new ArrayList<EvoValue>();
-		for (int i = 0; i < parents.size() - 1; i++) {
-			children.add(EvoValue.breedAndMutateValidChild(parents.get(i), parents.get(i + 1), 0.01, validPercent));
-		}
+		
+		EvoParamSet temp = new EvoParamSet(5);
+		temp.getParam(0).getValue().setPredicate(validPercent);
+		temp.getParam(1).getValue().setPredicate(validPercent);
+		temp.getParam(2).getValue().setPredicate(validPercent);
+		temp.getParam(3).getValue().setPredicate(validPercent);
+		temp.getParam(4).getValue().setPredicate(validPercent);
+		
+		List<EvoParamSet> population = EvoParamSet.generatePopulationFrom(temp, 100);
+		
 		System.out.println();
+		
+		
+		/*boolean done = false;
+		long count = 0;
+		while (!done) {
+			EvoTest t = new EvoTest(validPercent);
+			EvoTest e = new EvoTest(validPercent);
+			EvoTest child = EvoTest.breedAndMutateValidChild(t, e, 0.1);
+			System.out.println("Parents " + count + ": " + t.getComparator().getOp() + t.getValue().valueAsBigDec().toPlainString() + " & "
+				+ e.getComparator().getOp() + e.getValue().valueAsBigDec().toPlainString()
+				+ " Child: " + child.getComparator().getOp() + child.getValue().valueAsBigDec().toPlainString());
+			done = !child.getComparator().getOp().equals(e.getComparator().getOp()) && !child.getComparator().getOp().equals(t.getComparator().getOp());
+			count++;
+		}*/
+		
 		
 		/*while (true) {
 			EvoValue one = EvoValue.newValidInstance(validPercent);

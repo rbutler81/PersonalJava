@@ -44,6 +44,9 @@ public class EvoValue extends EvoGene {
 	
 	public void setBits(String bits) { this.bits = bits; decodeBits(); }
 	
+	@Override
+	public String toString() { return value.toPlainString(); }
+	
 	//Privates
 	private void generateValue(int numLeftOfDecMax, int decimalPlaces, float max, float min) {
 		
@@ -89,14 +92,17 @@ public class EvoValue extends EvoGene {
 		
 		valid = true;
 		value = BigDec.zero();
-		
-		BigDecimal[] mod = BigDec.valueOf(bits.length() - 1).divideAndRemainder(BigDec.valueOf(4));
-		if (!BigDec.EQ(mod[1], BigDec.zero())) valid = false;
-		
 		int tenToThe = 0;
+		
+		if (bits.length() <= 1) valid = false;
 		
 		if (valid) {
 			
+			BigDecimal[] mod = BigDec.valueOf(bits.length() - 1).divideAndRemainder(BigDec.valueOf(4));
+			if (!BigDec.EQ(mod[1], BigDec.zero())) valid = false;
+		}
+		
+		if (valid) {
 			
 			List<Integer> decList = new ArrayList<Integer>();
 			String[] decStrings = {"1010", "1011", "1100", "1101", "1110", "1111"};
@@ -108,7 +114,6 @@ public class EvoValue extends EvoGene {
 					lastDecIndex = decIndex + 1;
 					if (decIndex != -1) decList.add(decIndex);
 				}
-			//if (decList.size() == 0) valid = false;
 			}
 			
 			if (valid) {
@@ -122,7 +127,6 @@ public class EvoValue extends EvoGene {
 						}
 					}
 				}
-				//if (validIndex != 1) valid = false;
 				if (validIndex != 0 && validIndex != 1) valid = false;
 			}
 			
@@ -134,7 +138,6 @@ public class EvoValue extends EvoGene {
 			for (int i = 1; i < bits.length(); i = i + 4) {
 				if (bitsAsInt(bits.substring(i, i + 4)) > 9) decPlacesFound++;
 			}
-			//if (decPlacesFound != 1) valid = false;
 			if (decPlacesFound != 0 && decPlacesFound != 1) valid = false;
 			if (decPlacesFound == 0) tenToThe = ((bits.length() - 1) / 4) - 1;
 		}

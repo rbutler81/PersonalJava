@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import helpers.BigDec;
 import helpers.csvUtil.CSVWriter;
 
-public class DataPoint implements CSVWriter{
+public class DataPoint implements CSVWriter, BigDecMap{
 
 	private BigDecimal time;
 	private BigDecimal dataPoint;
@@ -147,6 +147,25 @@ public class DataPoint implements CSVWriter{
 		return r;
 	}
 	
+	@Override
+	public Map<Integer, BigDecimal> toBigDecMap() {
+		Map<Integer, BigDecimal> m = new HashMap<Integer, BigDecimal>();
+		
+		derivatives.entrySet().stream()
+			.sorted(Map.Entry.comparingByKey())
+			.forEach(e -> m.put(e.getKey() - 1, e.getValue()));
+		
+		aux.entrySet().stream()
+			.sorted(Map.Entry.comparingByKey())
+			.forEach(e -> m.put(e.getKey() + derivatives.entrySet().size() - 1, e.getValue()));
+		
+		m.put(100, time);
+		m.put(101, dataPoint);
+		
+		return m;
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String[]> toCSV(List<?> l) {
@@ -207,4 +226,7 @@ public class DataPoint implements CSVWriter{
 		return r;
 	}
 
+	
 }
+
+

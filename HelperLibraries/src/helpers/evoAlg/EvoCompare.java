@@ -51,6 +51,9 @@ public class EvoCompare {
 		else { return BigDec.LE(val1, val2); }
 	}
 	
+	@Override
+	public String toString() { return op; } 
+	
 	public static EvoCompare breed(EvoCompare parentOne, EvoCompare parentTwo) {
 		if (Chance.percent(50)) return new EvoCompare(parentOne.getID());
 		else return new EvoCompare(parentTwo.getID());

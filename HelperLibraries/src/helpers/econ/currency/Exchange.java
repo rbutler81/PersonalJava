@@ -9,8 +9,8 @@ import helpers.math.DataPoint;
 
 public class Exchange {
 
-	private Coin primary;
-	private Coin secondary;
+	protected Coin primary;
+	protected Coin secondary;
 	
 	public Exchange(Coin primary, Coin secondary) {
 		this.primary = primary;
@@ -30,7 +30,7 @@ public class Exchange {
 		if (BigDec.GE(primary.getValue(), amount.multiply(price)) && !BigDec.EQ(primary.getValue(), BigDec.zero())) {
 			primary.setValue(primary.getValue().subtract(amount.multiply(price)));
 			secondary.setValue(secondary.getValue().add(amount));
-			System.out.println("Buy! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString() + " " + price.toPlainString());
+			//System.out.println("Buy! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString() + " " + price.toPlainString());
 		}
 	}
 	
@@ -39,7 +39,7 @@ public class Exchange {
 		if (BigDec.GE(secondary.getValue(), amount) && !BigDec.EQ(secondary.getValue(), BigDec.zero())){
 			primary.setValue(primary.getValue().add(amount.multiply(price)));
 			secondary.setValue(secondary.getValue().subtract(amount));
-			System.out.println("Sell! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString() + " " + price.toPlainString());
+			//System.out.println("Sell! " + primary.getValue().toPlainString() + " " + secondary.getValue().toPlainString() + " " + price.toPlainString());
 		}
 	}
 	

@@ -19,6 +19,9 @@ public class EvoTest {
 		return comparator.test(val, value.valueAsBigDec());
 	}
 	
+	@Override
+	public String toString() { return comparator.toString() + value.toString(); }
+	
 	public static EvoTest breedAndMutateValidChild(EvoTest one, EvoTest two, double chanceOfMutation) {
 		EvoValue childValue = EvoValue.breedAndMutateValidChild(one.getValue(), two.getValue(), chanceOfMutation);
 		EvoCompare childCompare = EvoCompare.breedAndMutateValidChild(one.getComparator(), two.getComparator(), chanceOfMutation);

@@ -71,7 +71,7 @@ public class Main {
 		Double initVal = 1000.00;
 		EvoExchange ex = new EvoExchange(new Coin(CoinType.CAD, initVal), new Coin(CoinType.ETH, 0.0));
 		
-		for (int i = 0; i < 2000; i++) {
+		for (int i = 0; i < 100000; i++) {
 		
 			System.out.println();
 			System.out.println("Running back tests... ");
@@ -81,18 +81,16 @@ public class Main {
 				}
 			}
 			
-			population = population.stream()
-					.filter(p -> BigDec.GT(p.getFitness(), BigDec.valueOf(1)))
-					.sorted(Comparator.comparing(EvoBuySell::getFitness).reversed())
-					.limit(1000)
-					.collect(Collectors.toList());
+			population = EvoBuySell.limitAndRemoveDupes(population, 1000);
+			
+			List<EvoBuySell> breedList = EvoBuySell.rouletteSelection(population);
 			
 			System.out.println();
 			System.out.println("Breeding population... ");
 			List<EvoBuySell> child = new ArrayList<EvoBuySell>();
 			if (population.size() > 1) {
-				for (int j = 0; j < population.size() - 1; j = j + 2) {
-					child.add(EvoBuySell.breedAndMutateValidChild(population.get(j), population.get(j + 1), 0.01));
+				for (int j = 0; j < breedList.size() - 1; j = j + 2) {
+					child.add(EvoBuySell.breedAndMutateValidChild(breedList.get(j), breedList.get(j + 1), 0.01));
 				}
 			}
 			population.addAll(child);
@@ -102,8 +100,9 @@ public class Main {
 			List<EvoBuySell> newPopulation = EvoBuySell.generatePopulationFrom(temp, POP_SIZE - population.size());
 			population.addAll(newPopulation);
 			
-			if (population.size() >= 1000) {
-				newPopulation = EvoBuySell.generatePopulationFrom(temp, 100);
+			if (population.size() >= 100) {
+				System.out.println();
+				newPopulation = EvoBuySell.generatePopulationFrom(temp, 50);
 			}
 			population.addAll(newPopulation);
 			
@@ -115,11 +114,6 @@ public class Main {
 			System.out.println("Best params of population " + i + ":");
 			System.out.println(population.get(0));
 			System.out.println("Fitness: " + population.get(0).getFitness().toPlainString());
-			
 		}
-		
-		
-		
 	}
-
 }

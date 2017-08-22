@@ -18,6 +18,13 @@ public class Chance {
 		else return false;
 	}
 	
+	public static BigDecimal zeroToOne() {
+		Random rand = new Random();
+		int n = rand.nextInt(Integer.MAX_VALUE) + 1;
+		BigDecimal result = BigDec.valueOf(n).divide(BigDec.valueOf(Integer.MAX_VALUE), 30, RoundingMode.HALF_EVEN);
+		return result;
+	}
+	
 	public static int intLT(int LT) {
 		Random rand = new Random();
 		return rand.nextInt(LT);

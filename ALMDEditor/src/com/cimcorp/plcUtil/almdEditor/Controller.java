@@ -520,9 +520,11 @@ public class Controller {
 		    	CheckBoxEnhanced.setState(chkProgDisable, ALMDCompare.progDisable(selection));
 		    	CheckBoxEnhanced.setState(chkCondition, ALMDCompare.inCondition(selection));
 		    	
+		    	
 		    	langOList.clear();
 		    	descController.setLangDescMap(ALMDCompare.langDesc(tableView.getSelectionModel().getSelectedItems()));
 		    	langDescMap = descController.getLangDescMap();
+		    	
 	    	}
 	    }
 	    
@@ -587,7 +589,17 @@ public class Controller {
 	    				}
 	    			}
 	    			
-	    			e.setLangDesc(langDescMap);
+	    			langDescMap.entrySet().stream()
+	    				.forEach(p -> {
+	    					if (p.getValue().equals("-") && e.getLangDesc().containsKey(p.getKey())) {}
+	    					else if (p.getValue().equals("-") && !e.getLangDesc().containsKey(p.getKey())) {
+	    						e.getLangDesc().put(p.getKey(), p.getValue());
+	    					}
+	    					else if (!p.getValue().equals("-")) {
+	    						e.getLangDesc().put(p.getKey(), p.getValue());
+	    					}
+	    				});
+	    			//e.setLangDesc(langDescMap);
 	    			
 	    			if (!chkOperUnsuppress.isIndeterminate()) 
 	    				e.getAttributes().setOperUnsuppress(chkOperUnsuppress.isSelected());
@@ -640,7 +652,7 @@ public class Controller {
 	    	tableView.refresh();
 	    }
 	    
-	    private static final String[] numbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+	    private static final String[] numbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-"};
 	    
 	    private static void textFieldOnlyNum(TextField textField, int max){
 			textField.textProperty().addListener((obs, oldVal, newVal) -> {

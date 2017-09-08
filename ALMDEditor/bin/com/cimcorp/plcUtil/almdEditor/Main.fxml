@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#onKeyPress" prefHeight="1000.0" prefWidth="1303.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cimcorp.plcUtil.almdEditor.Controller">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1060.0" minWidth="10.0" prefWidth="278.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1177.0" minWidth="10.0" prefWidth="981.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="52.0" minHeight="0.0" prefHeight="52.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="812.0" minHeight="10.0" prefHeight="558.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="235.0" minHeight="0.0" prefHeight="59.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="501.0" minHeight="10.0" prefHeight="321.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <ToolBar prefHeight="73.0" prefWidth="1259.0" GridPane.columnSpan="2">
+        <items>
+          <Button fx:id="btnImport" focusTraversable="false" mnemonicParsing="false" onAction="#onImportBtn" text="Import CSV" />
+            <Button fx:id="btnExport" focusTraversable="false" mnemonicParsing="false" onAction="#onExportBtn" text="Export CSV" />
+        </items>
+      </ToolBar>
+      <ToolBar prefHeight="44.0" prefWidth="1293.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+         <items>
+          <Button fx:id="btnAdd" focusTraversable="false" mnemonicParsing="false" onAction="#onAddBtn" prefHeight="31.0" prefWidth="90.0" text="New" />
+            <Button fx:id="btnRemove" focusTraversable="false" mnemonicParsing="false" onAction="#onRemoveBtn" prefHeight="31.0" prefWidth="90.0" text="Remove" />
+            <Button fx:id="btnDuplicate" focusTraversable="false" mnemonicParsing="false" onAction="#onDuplicateBtn" prefHeight="31.0" prefWidth="90.0" text="Duplicate" />
+            <Button fx:id="btnEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onEditBtn" prefHeight="31.0" prefWidth="90.0" text="Edit" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnApplyEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onApplyEditBtn" prefHeight="31.0" prefWidth="101.0" text="Apply Edit" />
+            <Button fx:id="btnCancelEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onCancelEditBtn" prefHeight="31.0" prefWidth="101.0" text="Cancel Edit" />
+         </items>
+      </ToolBar>
+      <TableView fx:id="tableView" editable="true" prefHeight="540.0" prefWidth="1293.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+        <columns>
+          <TableColumn fx:id="tblColName" prefWidth="300.0" text="Name" />
+          <TableColumn fx:id="tblColScope" prefWidth="132.0" text="Scope" />
+            <TableColumn fx:id="tblColDescription" prefWidth="243.0" text="Description" />
+            <TableColumn fx:id="tblColOnDelay" prefWidth="100.0" text="On Delay" />
+            <TableColumn fx:id="tblColLatched" prefWidth="100.0" text="Latched" />
+            <TableColumn fx:id="tblColAckReq" prefWidth="100.0" text="Ack Req" />
+            <TableColumn fx:id="tblColClass" prefWidth="100.0" text="Class" />
+            <TableColumn fx:id="tblColLanguage" prefWidth="179.0" text="Additional Languages" />
+        </columns>
+      </TableView>
+      <GridPane GridPane.columnSpan="2" GridPane.rowIndex="3">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="284.0" minWidth="0.0" prefWidth="93.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="13.0" minHeight="13.0" prefHeight="13.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="13.0" minHeight="13.0" prefHeight="13.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="13.0" minHeight="13.0" prefHeight="13.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="13.0" minHeight="13.0" prefHeight="13.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="13.0" minHeight="13.0" prefHeight="13.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
+         <children>
+            <TextField fx:id="txtName" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblName" text="Name" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblScope" text="Scope" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtScope" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblDescription" text="Description" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtDescription" GridPane.columnSpan="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblClass" text="Alarm Class" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtClass" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblSeverity" text="Severity" GridPane.columnIndex="1" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtSeverity" GridPane.columnIndex="1" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblOnDelay" text="On Delay" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtOnDelay" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="txtShelveDuration" GridPane.columnIndex="1" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblShelveDuration" text="Shelve Duration" GridPane.columnIndex="1" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblMaxShelveDuration" text="Max Shelve Duration" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtMaxShelveDuration" GridPane.rowIndex="14">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label fx:id="lblAssoc1" text="Associated Tag 1" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblAssoc2" text="Associated Tag 2" GridPane.columnIndex="3" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblAssoc3" text="Associated Tag 3" GridPane.columnIndex="3" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblAssoc4" text="Associated Tag 4" GridPane.columnIndex="3" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="txtAssoc1" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="txtAssoc2" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="txtAssoc3" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="txtAssoc4" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <GridPane GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="16">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="159.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="188.0" minWidth="0.0" prefWidth="0.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <CheckBox fx:id="chkLatched" mnemonicParsing="false" text="Latched">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkAckReq" mnemonicParsing="false" text="AckReq" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkEnableIn" mnemonicParsing="false" text="Enable In" GridPane.columnIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkIn" mnemonicParsing="false" text="In" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkInFault" mnemonicParsing="false" text="In Fault" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkCondition" mnemonicParsing="false" text="Condition" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgAck" mnemonicParsing="false" text="ProgAck" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperAck" mnemonicParsing="false" text="OperAck" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgReset" mnemonicParsing="false" text="ProgReset" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperReset" mnemonicParsing="false" text="OperReset" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgSuppress" mnemonicParsing="false" text="ProgSuppress" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperSuppress" mnemonicParsing="false" text="OperSuppress" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgUnsuppress" mnemonicParsing="false" text="ProgUnsuppress" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperUnsuppress" mnemonicParsing="false" text="OperUnsuppress" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperShelve" mnemonicParsing="false" text="OperShelve" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgUnshelve" mnemonicParsing="false" text="ProgUnshelve" GridPane.rowIndex="8">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperUnshelve" mnemonicParsing="false" text="OperUnshelve" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgDisable" mnemonicParsing="false" text="ProgDisable" GridPane.rowIndex="10">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperDisable" mnemonicParsing="false" text="OperDisable" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkProgEnable" mnemonicParsing="false" text="ProgEnable" GridPane.rowIndex="9">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkOperEnable" mnemonicParsing="false" text="OperEnable" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="chkAlarmCountReset" mnemonicParsing="false" text="AlarmCountReset" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </CheckBox>
+               </children>
+            </GridPane>
+            <Button fx:id="btnDescDetails" maxHeight="8.0" maxWidth="8.0" mnemonicParsing="false" onAction="#onDescDetailsBtn" prefHeight="8.0" prefWidth="8.0" text="..." textAlignment="JUSTIFY" translateY="-4.0" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Button>
+         </children>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </GridPane.margin>
+      </GridPane>
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</GridPane>

@@ -195,7 +195,7 @@ public class DescController {
 	 
 	 @FXML
 	 void onAddDescBtn(ActionEvent event) {
-		if (langOList.size() > 0){	 
+		if (langOList.size() > 0) {	 
 		 	if (comboSel.getSelectionModel().getSelectedItem().equals("Alarm Name") 
 					 || comboSel.getSelectionModel().getSelectedItem().equals("Condition Name")) 
 				 txtLangDesc.setText(txtLangDesc.getText() + fixedWidth(comboSel.getSelectionModel().getSelectedItem()));
@@ -327,7 +327,7 @@ public class DescController {
 		}
 	}
 		
-	private void boolSelected(){
+	private void boolSelected() {
 		txtFixedWidth.setDisable(true);
 		chkFixedWidth.setDisable(true);
 		lblCharacters.setDisable(true);
@@ -339,7 +339,7 @@ public class DescController {
 		comboLeftFill.setDisable(false);
 	}
 	
-	private void stringSelected(){
+	private void stringSelected() {
 		txtFixedWidth.setDisable(false);
 		chkFixedWidth.setDisable(false);
 		lblCharacters.setDisable(false);

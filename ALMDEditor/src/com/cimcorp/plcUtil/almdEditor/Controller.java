@@ -402,6 +402,9 @@ public class Controller {
 	    private void delete(ObservableList<ALMD> selection){
 	    	
 	    	almdOList.removeAll(selection);
+	    	if (almdOList.size() > 0) {
+	    		tableView.getSelectionModel().clearAndSelect(0);
+	    	}
 	    	resetEdits();
 	    }
 	   

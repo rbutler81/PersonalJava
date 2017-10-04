@@ -29,8 +29,12 @@
           <Button fx:id="btnAdd" focusTraversable="false" mnemonicParsing="false" onAction="#onAddBtn" prefHeight="31.0" prefWidth="90.0" text="New" />
             <Button fx:id="btnRemove" focusTraversable="false" mnemonicParsing="false" onAction="#onRemoveBtn" prefHeight="31.0" prefWidth="90.0" text="Remove" />
             <Button fx:id="btnDuplicate" focusTraversable="false" mnemonicParsing="false" onAction="#onDuplicateBtn" prefHeight="31.0" prefWidth="90.0" text="Duplicate" />
-            <Button fx:id="btnEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onEditBtn" prefHeight="31.0" prefWidth="90.0" text="Edit" />
+            <CheckBox fx:id="chkDupReplace" mnemonicParsing="false" onAction="#onDupReplaceChk" text="And Replace" />
+            <TextField fx:id="txtDupContains" />
+            <TextField fx:id="txtDupWith" />
+            <CheckBox fx:id="chkIncrement" mnemonicParsing="false" text="Increment" />
             <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onEditBtn" prefHeight="31.0" prefWidth="90.0" text="Edit" />
             <Button fx:id="btnApplyEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onApplyEditBtn" prefHeight="31.0" prefWidth="101.0" text="Apply Edit" />
             <Button fx:id="btnCancelEdit" focusTraversable="false" mnemonicParsing="false" onAction="#onCancelEditBtn" prefHeight="31.0" prefWidth="101.0" text="Cancel Edit" />
          </items>

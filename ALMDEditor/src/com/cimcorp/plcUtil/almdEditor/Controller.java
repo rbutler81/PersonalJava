@@ -67,6 +67,8 @@ public class Controller {
 	 	@FXML private TextField txtAssoc2;
 	 	@FXML private TextField txtAssoc3;
 	 	@FXML private TextField txtAssoc4;
+	 	@FXML private TextField txtDupContains;
+	 	@FXML private TextField txtDupWith;
 	 	
 	 	private List<Label> lblList;
 	 	@FXML private Label lblName;
@@ -105,6 +107,8 @@ public class Controller {
 	 	@FXML private CheckBox chkOperShelve;
 	 	@FXML private CheckBox chkProgDisable;
 	 	@FXML private CheckBox chkCondition;
+	 	@FXML private CheckBox chkDupReplace;
+	 	@FXML private CheckBox chkIncrement;
 	
 	    private ObservableList<ALMD> almdOList;
 	    
@@ -138,7 +142,9 @@ public class Controller {
 		@FXML
 	    public void initialize() {
 	    	
-	    	almdOList = FXCollections.observableArrayList(new ArrayList<ALMD>());
+	    	findDupReplaceDisable();
+			
+			almdOList = FXCollections.observableArrayList(new ArrayList<ALMD>());
 	    	tableView.setItems(almdOList);
 	    	
 	    	langOList = FXCollections.observableArrayList(new ArrayList<String>());
@@ -374,6 +380,24 @@ public class Controller {
 	    void onCancelEditBtn(ActionEvent event){
 	    	resetEdits();
 	    }
+	    
+	    @FXML
+	    void onDupReplaceChk(ActionEvent event){
+	    	findDupReplaceDisable();
+	    }
+	    
+	    private void findDupReplaceDisable() {
+	    	if (chkDupReplace.isSelected()) {
+	    		txtDupContains.setDisable(false);
+	    		txtDupWith.setDisable(false);
+	    		chkIncrement.setDisable(false);
+	    	}
+	    	else {
+	    		txtDupContains.setDisable(true);
+	    		txtDupWith.setDisable(true);
+	    		chkIncrement.setDisable(true);
+	    	}
+	    }
 
 	    private void delete(ObservableList<ALMD> selection){
 	    	
@@ -417,44 +441,72 @@ public class Controller {
 	    	almdOList.add(almd);
 	    }
 
-	    private void duplicate(ObservableList<ALMD> selection){
+	    private void duplicate(ObservableList<ALMD> selection) {
 	    
 	    	resetEdits();
 	    	
 	    	String name = "_duplicate";
+	    	for (ALMD f : selection) {
 	    	
-	    	for (ALMD f : selection){
-	    	
-		    	List<ALMD> newEntries = new ArrayList<ALMD>();
-		    	
-		    	for (ALMD e : almdOList){
-		    		if (e.getName().startsWith(f.getName() + name)) newEntries.add(e);
+		    	if (chkDupReplace.isSelected() && !txtDupContains.getText().equals("")) {
+		    		ALMD n = new ALMD(f);
+		    		ALMDAttributes att = new ALMDAttributes(f.getAttributes());
+		    		n.setAttributes(att);
+		    		String aName = n.getName();
+		    		String desc = n.getDescription();
+		    		
+		    		aName = aName.replaceAll(txtDupContains.getText(), txtDupWith.getText());
+		    		desc = desc.replaceAll(txtDupContains.getText(), txtDupWith.getText());
+		    		
+		    		n.getLangDesc().entrySet().stream()
+		    			.forEach(m -> {
+		    				m.setValue(m.getValue().replaceAll(txtDupContains.getText(), txtDupWith.getText()));
+		    			});
+		    		
+		    		n.setName(aName);
+		    		n.setDescription(desc);
+		    		almdOList.add(n);
 		    	}
-		    	
-		    	boolean done = false;
-		    	int v = newEntries.size();
-		    	while (!done){
-		    		if (v == 0) done = true;
-		    		else {
-		    			boolean exists = false;
-		    			for (ALMD a : newEntries){
-		    				if (a.getName().equals(f.getName() + name + v)){
-		    					exists = true;
-		    				}
-		    			}
-		    			if (exists) v++;
-		    			else {
-		    				done = true;
-		    				name = name + v;
-		    			}
-		    		}
+	    		
+		    	else {
+		    		
+		    		List<ALMD> newEntries = new ArrayList<ALMD>();
+			    	
+			    	for (ALMD e : almdOList){
+			    		if (e.getName().startsWith(f.getName() + name)) newEntries.add(e);
+			    	}
+			    	
+			    	boolean done = false;
+			    	int v = newEntries.size();
+			    	while (!done){
+			    		if (v == 0) done = true;
+			    		else {
+			    			boolean exists = false;
+			    			for (ALMD a : newEntries){
+			    				if (a.getName().equals(f.getName() + name + v)) {
+			    					exists = true;
+			    				}
+			    			}
+			    			if (exists) v++;
+			    			else {
+			    				done = true;
+			    				name = name + v;
+			    			}
+			    		}
+			    	}
+			    	ALMD n = new ALMD(f);
+		    		ALMDAttributes a = new ALMDAttributes(f.getAttributes());
+		    		n.setName(n.getName() + name);
+		    		n.setAttributes(a);
+		    		almdOList.add(n);
 		    	}
-		    	ALMD n = new ALMD(f);
-	    		ALMDAttributes a = new ALMDAttributes(f.getAttributes());
-	    		n.setName(n.getName() + name);
-	    		n.setAttributes(a);
-	    		almdOList.add(n);
 	    	}
+	    	
+	    	if (isNumber(txtDupWith.getText()) && !chkDupReplace.isDisable() && chkIncrement.isSelected()) {
+    			Integer i = Integer.parseInt(txtDupWith.getText());
+    			i++;
+    			txtDupWith.setText(i.toString());
+    		}
 	    }	    
 
 	    private void loadEdit(ObservableList<ALMD> selection) {
@@ -473,6 +525,10 @@ public class Controller {
 		    	btnRemove.setDisable(true);
 		    	btnDuplicate.setDisable(true);
 		    	btnEdit.setDisable(true);
+		    	txtDupContains.setDisable(true);
+		    	txtDupWith.setDisable(true);
+		    	chkDupReplace.setDisable(true);
+		    	chkIncrement.setDisable(true);
 		    	
 		    	for (TextField e : txtFieldList){
 		    		e.setDisable(false);
@@ -543,6 +599,9 @@ public class Controller {
 	    	btnRemove.setDisable(false);
 	    	btnDuplicate.setDisable(false);
 	    	btnEdit.setDisable(false);
+	    	chkDupReplace.setDisable(false);
+	    	findDupReplaceDisable();
+	    	
 	    	for (TextField e : txtFieldList){
 	    		e.setDisable(true);
 	    		e.setText("");
@@ -599,7 +658,7 @@ public class Controller {
 	    						e.getLangDesc().put(p.getKey(), p.getValue());
 	    					}
 	    				});
-	    			//e.setLangDesc(langDescMap);
+	    			
 	    			
 	    			if (!chkOperUnsuppress.isIndeterminate()) 
 	    				e.getAttributes().setOperUnsuppress(chkOperUnsuppress.isSelected());
@@ -653,6 +712,26 @@ public class Controller {
 	    }
 	    
 	    private static final String[] numbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-"};
+	    private static final String[] numbersOnly = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+	    
+	    private static boolean isNumber(String e) {
+	    	
+	    	boolean rVal = true;
+	    	
+	    	for (char ch : e.toCharArray()) {
+	    		if (rVal) {
+	    			boolean charNum = false;
+		    		for (String f : numbersOnly) {
+		    			if (!charNum) {
+		    				charNum = (f.equals(Character.toString(ch)));
+		    			}
+		    		}
+		    		rVal = charNum;
+	    		}
+	    	}
+	    	
+	    	return rVal;
+	    }
 	    
 	    private static void textFieldOnlyNum(TextField textField, int max){
 			textField.textProperty().addListener((obs, oldVal, newVal) -> {

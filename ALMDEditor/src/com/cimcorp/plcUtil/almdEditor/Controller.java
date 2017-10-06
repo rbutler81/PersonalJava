@@ -243,6 +243,20 @@ public class Controller {
 		textFieldOnlyNum(txtClass, 10);
 		textFieldOnlyNum(txtShelveDuration, 20);
 		textFieldOnlyNum(txtMaxShelveDuration, 20);
+		
+		txtDupWith.textProperty().addListener((obs, oldVal, newVal) -> {
+			txtDupWithEnabler(newVal);
+		});
+		
+		txtDupWithEnabler(txtDupWith.getText());
+	}
+	
+	private void txtDupWithEnabler(String newVal) {
+		if (isNumber(newVal) && chkIncrement.isDisable()) {
+			chkIncrement.setDisable(false);
+		} else if (!isNumber(newVal) && !chkIncrement.isDisable()) {
+			chkIncrement.setDisable(true);
+		}
 	}
 
 	@FXML
@@ -282,6 +296,7 @@ public class Controller {
 	@FXML
 	void onDuplicateBtn(ActionEvent event) {
 		duplicate(tableView.getSelectionModel().getSelectedItems());
+		txtDupWithEnabler(txtDupWith.getText());
 	}
 
 	@FXML
@@ -604,6 +619,7 @@ public class Controller {
 		btnEdit.setDisable(false);
 		chkDupReplace.setDisable(false);
 		findDupReplaceDisable();
+		if (chkDupReplace.isDisable()) txtDupWithEnabler(txtDupWith.getText());
 
 		for (TextField e : txtFieldList) {
 			e.setDisable(true);
@@ -716,6 +732,7 @@ public class Controller {
 	private static boolean isNumber(String e) {
 
 		boolean rVal = true;
+		rVal = !e.equals("");
 
 		for (char ch : e.toCharArray()) {
 			if (rVal) {

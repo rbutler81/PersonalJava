@@ -20,7 +20,8 @@
    <children>
       <ToolBar prefHeight="73.0" prefWidth="1259.0" GridPane.columnSpan="2">
         <items>
-          <Button fx:id="btnImport" focusTraversable="false" mnemonicParsing="false" onAction="#onImportBtn" text="Import CSV" />
+          <Button fx:id="btnImport" focusTraversable="false" mnemonicParsing="false" onAction="#onImportBtn" text="Import Logix CSV" />
+            <Button fx:id="btnAlarmsImport" focusTraversable="false" mnemonicParsing="false" onAction="#onAlarmsImportBtn" text="Import Alarms CSV" />
             <Button fx:id="btnExport" focusTraversable="false" mnemonicParsing="false" onAction="#onExportBtn" text="Export CSV" />
         </items>
       </ToolBar>

@@ -23,7 +23,7 @@ public class CSVUtil {
 		List<String[]> o = new ArrayList<String[]>();
 		
 		while ((line = br.readLine()) != null){
-				String[] s = line.split(separator);
+				String[] s = line.split(separator, -1);
 				o.add(s);
 		}
 		br.close();

@@ -36,6 +36,7 @@ public class Controller {
 
 	 	@FXML private Button btnExport;
 	 	@FXML private Button btnImport;
+	 	@FXML private Button btnAlarmsImport;
 	 	@FXML private Button btnApplyEdit;
 	 	@FXML private Button btnCancelEdit;
 	 	@FXML private Button btnAdd;
@@ -269,6 +270,22 @@ public class Controller {
 		if (selectedFile != null) {
 			List<String[]> csvData = CSVUtil.read(selectedFile.toString(), ",");
 			List<ALMD> almdList = ALMD.findALMDS(csvData);
+
+			almdOList = FXCollections.observableArrayList(almdList);
+			tableView.setItems(almdOList);
+		}
+	}
+	
+	@FXML
+	void onAlarmsImportBtn(ActionEvent event) throws IOException {
+
+		FileChooser fc = new FileChooser();
+		fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+		File selectedFile = fc.showOpenDialog(null);
+
+		if (selectedFile != null) {
+			List<String[]> csvData = CSVUtil.read(selectedFile.toString(), ",");
+			List<ALMD> almdList = ALMD.parseSpreadsheet(csvData);
 
 			almdOList = FXCollections.observableArrayList(almdList);
 			tableView.setItems(almdOList);

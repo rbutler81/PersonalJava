@@ -57,8 +57,7 @@ public class ALMD implements CSVWriter {
 		});
 		this.getAttributes().setMinDurationPRE(Integer.toString(this.alarmDetails.getTime()));
 	}
-	
-	
+
 	public ALMD(String scope, String name, String description, ALMDAttributes attributes,
 			Map<String, String> langDesc) {
 		this.scope = new SimpleStringProperty(scope);
@@ -180,7 +179,7 @@ public class ALMD implements CSVWriter {
 	public StringProperty alarmClassProperty() {
 		return getAttributes().alarmClassProperty();
 	}
-	
+
 	public AlarmTableElement getAlarmDetails() {
 		return alarmDetails;
 	}
@@ -221,12 +220,12 @@ public class ALMD implements CSVWriter {
 							"ATTRIBUTES" });
 				}
 
-				r.add(new String[] { "TAG", e.getScope(), e.getName().replace(" ", "_"), "\"\"", "\"ALARM_DIGITAL\"", "\"\"",
-						e.getAttributes().toString() });
+				r.add(new String[] { "TAG", e.getScope(), e.getName().replace(" ", "_"), "\"\"", "\"ALARM_DIGITAL\"",
+						"\"\"", e.getAttributes().toString() });
 
 				if (!e.getDescription().equals("")) {
-					r.add(new String[] { "ALMMSG:en-US", e.getScope(), e.getName().replace(" ", "_"), "\"" + e.getDescription() + "\"",
-							"", "\"AM\"" });
+					r.add(new String[] { "ALMMSG:en-US", e.getScope(), e.getName().replace(" ", "_"),
+							"\"" + e.getDescription() + "\"", "", "\"AM\"" });
 				}
 
 				for (Entry<String, String> b : e.getLangDesc().entrySet()) {
@@ -260,69 +259,70 @@ public class ALMD implements CSVWriter {
 	}
 
 	public static List<ALMD> parseSpreadsheet(List<String[]> list) {
-		
-		//Search list for where the 'bits' row is
+
+		// Search list for where the 'bits' row is
 		boolean done = false;
 		int bitsRow = 0;
 		for (int i = 0; i < list.size() && !done; i++) {
 			done = list.get(i)[0].equals("Bit");
-			if (done) bitsRow = i;
+			if (done)
+				bitsRow = i;
 		}
-		
+
 		int assetsRow = bitsRow + 5;
-		
-		//Create template objects for parameters
+
+		// Create template objects for parameters
 		List<AlarmTableElement> alarmTemplate = new ArrayList<AlarmTableElement>();
 		for (int i = bitsRow; i < assetsRow; i++) {
-			
+
 			if (i == bitsRow) {
-				//Get all the "Bit" fields and add them to new objects
+				// Get all the "Bit" fields and add them to new objects
 				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
 					AlarmTableElement b = new AlarmTableElement();
 					b.setBit(Integer.parseInt(list.get(i)[j]));
 					alarmTemplate.add(b);
 				}
 			}
-			
+
 			else if (i == bitsRow + 1) {
-				//get all "Name" fields and add them to object created above
+				// get all "Name" fields and add them to object created above
 				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
 					alarmTemplate.get(j - 1).setName(list.get(i)[j]);
 				}
 			}
-			
+
 			else if (i == bitsRow + 2) {
-				//get all "Description" fields and add them to object created above
+				// get all "Description" fields and add them to object created
+				// above
 				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
 					alarmTemplate.get(j - 1).setDescription(list.get(i)[j]);
 				}
 			}
-			
+
 			else if (i == bitsRow + 3) {
-				//get all "Reset" fields and add them to object created above
+				// get all "Reset" fields and add them to object created above
 				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
 					alarmTemplate.get(j - 1).setReset(list.get(i)[j]);
 				}
 			}
-			
+
 			else if (i == bitsRow + 4) {
-				//get all "Time" fields and add them to object created above
+				// get all "Time" fields and add them to object created above
 				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
 					if (!list.get(i)[j].equals("")) {
 						alarmTemplate.get(j - 1).setTime(Integer.parseInt(list.get(i)[j]));
-					}
-					else {
+					} else {
 						alarmTemplate.get(j - 1).setTime(0);
 					}
 				}
 			}
-				
+
 		}
-		
+
 		List<AlarmTableElement> alarmList = new ArrayList<AlarmTableElement>();
-		
+
 		for (int i = assetsRow; i < list.size(); i++) {
-			
+
 			String asset = list.get(i)[0];
 			for (int j = 1; j < Array.getLength(list.get(i)); j++) {
 				String type = list.get(i)[j];
@@ -332,44 +332,45 @@ public class ALMD implements CSVWriter {
 				}
 			}
 		}
-		
+
 		List<ALMD> rVal = new ArrayList<ALMD>();
-		
+
 		for (AlarmTableElement e : alarmList) {
 			rVal.add(new ALMD(e));
 		}
-		
+
 		return rVal;
 	}
-	
+
 	public String generateALMDBranch() {
 		String rVal = "SOR ALMD " + this.name.get().replace(" ", "_") + " 0 ";
 		if (this.getAlarmDetails().getReset().equals("")) {
 			rVal = rVal + "0 0 0 EOR ";
-		}
-		else {
+		} else {
 			rVal = rVal + this.getAlarmDetails().getReset().replace(" ", "_") + " 0 0 EOR ";
 		}
 		return rVal;
 	}
-	
+
 	public String generateAlarmFaultBranch() {
-		
+
 		String rVal = "SOR XIC " + this.name.get().replace(" ", "_") + ".InAlarm ";
 		if (this.getAlarmDetails().getType().equals("A")) {
-			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms." + this.getAlarmDetails().getBit() + " EOR ";
+			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms."
+					+ this.getAlarmDetails().getBit() + " EOR ";
+		} else if (this.getAlarmDetails().getType().equals("F")) {
+			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults."
+					+ this.getAlarmDetails().getBit() + " EOR ";
+		} else if (this.getAlarmDetails().getType().equals("B")) {
+			rVal = rVal + "BST OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms."
+					+ this.getAlarmDetails().getBit() + " NXB " + "OTE "
+					+ this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults." + this.getAlarmDetails().getBit()
+					+ " BND EOR ";
 		}
-		else if (this.getAlarmDetails().getType().equals("F")) {
-			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults." + this.getAlarmDetails().getBit() + " EOR ";
-		}
-		else if (this.getAlarmDetails().getType().equals("B")) {
-			rVal = rVal + "BST OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms." + this.getAlarmDetails().getBit() + " NXB " +
-							"OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults." + this.getAlarmDetails().getBit() + " BND EOR ";
-		}
-		
+
 		return rVal;
 	}
-	
+
 	public static List<ALMD> findALMDS(List<String[]> list) {
 
 		// Filter the list down to only ALMD instructions and group the

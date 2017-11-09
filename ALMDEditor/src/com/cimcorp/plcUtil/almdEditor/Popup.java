@@ -17,7 +17,7 @@ public class Popup {
 		popupwindow.setTitle("AB Code");
 
 		Label l1 = new Label("Copy / paste the following into Logix:");
-		
+
 		TextArea text = new TextArea(t);
 		text.setPrefHeight(400);
 		text.setPrefWidth(500);

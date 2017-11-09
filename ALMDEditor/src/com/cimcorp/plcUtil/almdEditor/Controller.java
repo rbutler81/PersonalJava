@@ -34,101 +34,136 @@ import javafx.stage.Stage;
 
 public class Controller {
 
-	 	@FXML private Button btnExport;
-	 	@FXML private Button btnImport;
-	 	@FXML private Button btnAlarmsImport;
-	 	@FXML private Button btnApplyEdit;
-	 	@FXML private Button btnCancelEdit;
-	 	@FXML private Button btnAdd;
-	 	@FXML private Button btnRemove;
-	 	@FXML private Button btnDuplicate;
-	 	@FXML private Button btnEdit;
-	 	@FXML private Button btnDescDetails;
-	 	@FXML private Button btnDisplayCode;
-	 	
-	 	@FXML private TableView<ALMD> tableView;
-	 	@FXML private TableColumn<ALMD, String> tblColName;
-	 	@FXML private TableColumn<ALMD, String> tblColScope;
-	 	@FXML private TableColumn<ALMD, String> tblColDescription;
-	 	@FXML private TableColumn<ALMD, String> tblColOnDelay;
-	 	@FXML private TableColumn<ALMD, Boolean> tblColLatched;
-	 	@FXML private TableColumn<ALMD, Boolean> tblColAckReq;
-	 	@FXML private TableColumn<ALMD, String> tblColClass;
-	 	@FXML private TableColumn<ALMD, String> tblColLanguage;
-	 	
-	 	private List<TextField> txtFieldList;
-	 	@FXML private TextField txtName;
-	 	@FXML private TextField txtScope;
-	 	@FXML private TextField txtDescription;
-	 	@FXML private TextField txtClass;
-	 	@FXML private TextField txtSeverity;
-	 	@FXML private TextField txtOnDelay;
-	 	@FXML private TextField txtShelveDuration;
-	 	@FXML private TextField txtMaxShelveDuration;
-	 	@FXML private TextField txtAssoc1;
-	 	@FXML private TextField txtAssoc2;
-	 	@FXML private TextField txtAssoc3;
-	 	@FXML private TextField txtAssoc4;
-	 	@FXML private TextField txtDupContains;
-	 	@FXML private TextField txtDupWith;
-	 	
-	 	private List<Label> lblList;
-	 	@FXML private Label lblName;
-	 	@FXML private Label lblScope;
-	 	@FXML private Label lblDescription;
-	 	@FXML private Label lblClass;
-	 	@FXML private Label lblSeverity;
-	 	@FXML private Label lblOnDelay;
-	 	@FXML private Label lblShelveDuration;
-	 	@FXML private Label lblMaxShelveDuration;
-	 	@FXML private Label lblAssoc1;
-	 	@FXML private Label lblAssoc2;
-	 	@FXML private Label lblAssoc3;
-	 	@FXML private Label lblAssoc4;
-	 	
-	 	private List<CheckBox> chkList;
-	 	@FXML private CheckBox chkOperUnsuppress;
-	 	@FXML private CheckBox chkInFault;
-	 	@FXML private CheckBox chkAlarmCountReset;
-	 	@FXML private CheckBox chkIn;
-	 	@FXML private CheckBox chkProgUnsuppress;
-	 	@FXML private CheckBox chkProgReset;
-	 	@FXML private CheckBox chkProgUnshelve;
-	 	@FXML private CheckBox chkProgAck;
-	 	@FXML private CheckBox chkEnableIn;
-	 	@FXML private CheckBox chkOperAck;
-	 	@FXML private CheckBox chkProgSuppress;
-	 	@FXML private CheckBox chkOperUnshelve;
-	 	@FXML private CheckBox chkOperReset;
-	 	@FXML private CheckBox chkProgEnable;
-	 	@FXML private CheckBox chkLatched;
-	 	@FXML private CheckBox chkAckReq;
-	 	@FXML private CheckBox chkOperDisable;
-	 	@FXML private CheckBox chkOperEnable;
-	 	@FXML private CheckBox chkOperSuppress;
-	 	@FXML private CheckBox chkOperShelve;
-	 	@FXML private CheckBox chkProgDisable;
-	 	@FXML private CheckBox chkCondition;
-	 	@FXML private CheckBox chkDupReplace;
-	 	@FXML private CheckBox chkIncrement;
-	
-	    private ObservableList<ALMD> almdOList;
-	    
-	    KeyCombination keyComboCtrlD = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
-	    KeyCombination keyComboCtrlN = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
-	    KeyCombination keyComboCtrlE = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
-	    KeyCombination keyComboCtrlS = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
-	    KeyCombination keyComboCtrlQ = new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN);
-	    
-	    private Stage descStage;
-	    private DescController descController;
-	    
-	    private ObservableList<String> langOList;
-	    private Map<String, String> langDescMap;
-	    
-	    public void setDescStage(Stage s) { this.descStage = s; }
-	    public void setDescController(DescController d) { this.descController = d; }
-	    
+	@FXML
+	private Button btnExport;
+	@FXML
+	private Button btnImport;
+	@FXML
+	private Button btnAlarmsImport;
+	@FXML
+	private Button btnApplyEdit;
+	@FXML
+	private Button btnCancelEdit;
+	@FXML
+	private Button btnAdd;
+	@FXML
+	private Button btnRemove;
+	@FXML
+	private Button btnDuplicate;
+	@FXML
+	private Button btnEdit;
+	@FXML
+	private Button btnDescDetails;
+	@FXML
+	private Button btnDisplayCode;
+
+	@FXML
+	private TableView<ALMD> tableView;
+	@FXML
+	private TableColumn<ALMD, String> tblColName;
+	@FXML
+	private TableColumn<ALMD, String> tblColScope;
+	@FXML
+	private TableColumn<ALMD, String> tblColDescription;
+	@FXML
+	private TableColumn<ALMD, String> tblColOnDelay;
+	@FXML
+	private TableColumn<ALMD, Boolean> tblColLatched;
+	@FXML
+	private TableColumn<ALMD, Boolean> tblColAckReq;
+	@FXML
+	private TableColumn<ALMD, String> tblColClass;
+	@FXML
+	private TableColumn<ALMD, String> tblColLanguage;
+
+	private List<TextField> txtFieldList;
+	@FXML
+	private TextField txtName;
+	@FXML
+	private TextField txtScope;
+	@FXML
+	private TextField txtDescription;
+	@FXML
+	private TextField txtClass;
+	@FXML
+	private TextField txtSeverity;
+	@FXML
+	private TextField txtOnDelay;
+	@FXML
+	private TextField txtShelveDuration;
+	@FXML
+	private TextField txtMaxShelveDuration;
+	@FXML
+	private TextField txtAssoc1;
+	@FXML
+	private TextField txtAssoc2;
+	@FXML
+	private TextField txtAssoc3;
+	@FXML
+	private TextField txtAssoc4;
+	@FXML
+	private TextField txtDupContains;
+	@FXML
+	private TextField txtDupWith;
+
+	private List<Label> lblList;
+	@FXML
+	private Label lblName;
+	@FXML
+	private Label lblScope;
+	@FXML
+	private Label lblDescription;
+	@FXML
+	private Label lblClass;
+	@FXML
+	private Label lblSeverity;
+	@FXML
+	private Label lblOnDelay;
+	@FXML
+	private Label lblShelveDuration;
+	@FXML
+	private Label lblMaxShelveDuration;
+	@FXML
+	private Label lblAssoc1;
+	@FXML
+	private Label lblAssoc2;
+	@FXML
+	private Label lblAssoc3;
+	@FXML
+	private Label lblAssoc4;
+
+	private List<CheckBox> chkList;
+	@FXML
+	private CheckBox chkLatched;
+	@FXML
+	private CheckBox chkAckReq;
+	@FXML
+	private CheckBox chkDupReplace;
+	@FXML
+	private CheckBox chkIncrement;
+
+	private ObservableList<ALMD> almdOList;
+
+	KeyCombination keyComboCtrlD = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
+	KeyCombination keyComboCtrlN = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
+	KeyCombination keyComboCtrlE = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
+	KeyCombination keyComboCtrlS = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+	KeyCombination keyComboCtrlQ = new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN);
+
+	private Stage descStage;
+	private DescController descController;
+
+	private ObservableList<String> langOList;
+	private Map<String, String> langDescMap;
+
+	public void setDescStage(Stage s) {
+		this.descStage = s;
+	}
+
+	public void setDescController(DescController d) {
+		this.descController = d;
+	}
+
 	public Map<String, String> getLangDescMap() {
 		return langDescMap;
 	}
@@ -184,28 +219,8 @@ public class Controller {
 		txtFieldList.add(txtAssoc4);
 
 		chkList = new ArrayList<CheckBox>();
-		chkList.add(chkOperUnsuppress);
-		chkList.add(chkInFault);
-		chkList.add(chkAlarmCountReset);
-		chkList.add(chkIn);
-		chkList.add(chkProgUnsuppress);
-		chkList.add(chkProgReset);
-		chkList.add(chkProgUnshelve);
-		chkList.add(chkProgAck);
-		chkList.add(chkEnableIn);
-		chkList.add(chkOperAck);
-		chkList.add(chkProgSuppress);
-		chkList.add(chkOperUnshelve);
-		chkList.add(chkOperReset);
-		chkList.add(chkProgEnable);
 		chkList.add(chkLatched);
 		chkList.add(chkAckReq);
-		chkList.add(chkOperDisable);
-		chkList.add(chkOperEnable);
-		chkList.add(chkOperSuppress);
-		chkList.add(chkOperShelve);
-		chkList.add(chkProgDisable);
-		chkList.add(chkCondition);
 
 		resetEdits();
 
@@ -245,14 +260,14 @@ public class Controller {
 		textFieldOnlyNum(txtClass, 10);
 		textFieldOnlyNum(txtShelveDuration, 20);
 		textFieldOnlyNum(txtMaxShelveDuration, 20);
-		
+
 		txtDupWith.textProperty().addListener((obs, oldVal, newVal) -> {
 			txtDupWithEnabler(newVal);
 		});
-		
+
 		txtDupWithEnabler(txtDupWith.getText());
 	}
-	
+
 	private void txtDupWithEnabler(String newVal) {
 		if (isNumber(newVal) && chkIncrement.isDisable()) {
 			chkIncrement.setDisable(false);
@@ -276,7 +291,7 @@ public class Controller {
 			tableView.setItems(almdOList);
 		}
 	}
-	
+
 	@FXML
 	void onAlarmsImportBtn(ActionEvent event) throws IOException {
 
@@ -310,7 +325,7 @@ public class Controller {
 			}
 		}
 	}
-	
+
 	@FXML
 	void onDisplayCodeBtn(ActionEvent event) throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, InstantiationException, IOException {
@@ -322,7 +337,7 @@ public class Controller {
 				almdBranch = almdBranch + a.generateALMDBranch();
 				alarmBranch = alarmBranch + a.generateAlarmFaultBranch();
 			}
-			
+
 			Popup.display(almdBranch + alarmBranch);
 		}
 	}
@@ -607,28 +622,8 @@ public class Controller {
 			txtAssoc3.setText(ALMDCompare.assocTag3(selection));
 			txtAssoc4.setText(ALMDCompare.assocTag4(selection));
 
-			CheckBoxEnhanced.setState(chkOperUnsuppress, ALMDCompare.operUnsuppress(selection));
-			CheckBoxEnhanced.setState(chkInFault, ALMDCompare.inFault(selection));
-			CheckBoxEnhanced.setState(chkAlarmCountReset, ALMDCompare.alarmCountReset(selection));
-			CheckBoxEnhanced.setState(chkIn, ALMDCompare.in(selection));
-			CheckBoxEnhanced.setState(chkProgUnsuppress, ALMDCompare.progUnsuppress(selection));
-			CheckBoxEnhanced.setState(chkProgReset, ALMDCompare.progReset(selection));
-			CheckBoxEnhanced.setState(chkProgUnshelve, ALMDCompare.progUnshelve(selection));
-			CheckBoxEnhanced.setState(chkProgAck, ALMDCompare.progAck(selection));
-			CheckBoxEnhanced.setState(chkEnableIn, ALMDCompare.enableIn(selection));
-			CheckBoxEnhanced.setState(chkOperAck, ALMDCompare.operAck(selection));
-			CheckBoxEnhanced.setState(chkProgSuppress, ALMDCompare.progSuppress(selection));
-			CheckBoxEnhanced.setState(chkOperUnshelve, ALMDCompare.operUnshelve(selection));
-			CheckBoxEnhanced.setState(chkOperReset, ALMDCompare.operReset(selection));
-			CheckBoxEnhanced.setState(chkProgEnable, ALMDCompare.progEnable(selection));
 			CheckBoxEnhanced.setState(chkLatched, ALMDCompare.latched(selection));
 			CheckBoxEnhanced.setState(chkAckReq, ALMDCompare.ackRequired(selection));
-			CheckBoxEnhanced.setState(chkOperDisable, ALMDCompare.operDisable(selection));
-			CheckBoxEnhanced.setState(chkOperEnable, ALMDCompare.operEnable(selection));
-			CheckBoxEnhanced.setState(chkOperSuppress, ALMDCompare.operSuppress(selection));
-			CheckBoxEnhanced.setState(chkOperShelve, ALMDCompare.operShelve(selection));
-			CheckBoxEnhanced.setState(chkProgDisable, ALMDCompare.progDisable(selection));
-			CheckBoxEnhanced.setState(chkCondition, ALMDCompare.inCondition(selection));
 
 			langOList.clear();
 			descController.setLangDescMap(ALMDCompare.langDesc(tableView.getSelectionModel().getSelectedItems()));
@@ -653,7 +648,8 @@ public class Controller {
 		btnEdit.setDisable(false);
 		chkDupReplace.setDisable(false);
 		findDupReplaceDisable();
-		if (chkDupReplace.isDisable()) txtDupWithEnabler(txtDupWith.getText());
+		if (chkDupReplace.isDisable())
+			txtDupWithEnabler(txtDupWith.getText());
 
 		for (TextField e : txtFieldList) {
 			e.setDisable(true);
@@ -709,50 +705,10 @@ public class Controller {
 				}
 			});
 
-			if (!chkOperUnsuppress.isIndeterminate())
-				e.getAttributes().setOperUnsuppress(chkOperUnsuppress.isSelected());
-			if (!chkInFault.isIndeterminate())
-				e.getAttributes().setInFault(chkInFault.isSelected());
-			if (!chkAlarmCountReset.isIndeterminate())
-				e.getAttributes().setAlarmCountReset(chkAlarmCountReset.isSelected());
-			if (!chkIn.isIndeterminate())
-				e.getAttributes().setIn(chkIn.isSelected());
-			if (!chkProgUnsuppress.isIndeterminate())
-				e.getAttributes().setProgUnsuppress(chkProgUnsuppress.isSelected());
-			if (!chkProgReset.isIndeterminate())
-				e.getAttributes().setProgReset(chkProgReset.isSelected());
-			if (!chkProgUnshelve.isIndeterminate())
-				e.getAttributes().setProgUnshelve(chkProgUnshelve.isSelected());
-			if (!chkProgAck.isIndeterminate())
-				e.getAttributes().setProgAck(chkProgAck.isSelected());
-			if (!chkEnableIn.isIndeterminate())
-				e.getAttributes().setEnableIn(chkEnableIn.isSelected());
-			if (!chkOperAck.isIndeterminate())
-				e.getAttributes().setOperAck(chkOperAck.isSelected());
-			if (!chkProgSuppress.isIndeterminate())
-				e.getAttributes().setProgSuppress(chkProgSuppress.isSelected());
-			if (!chkOperUnshelve.isIndeterminate())
-				e.getAttributes().setOperUnshelve(chkOperUnshelve.isSelected());
-			if (!chkOperReset.isIndeterminate())
-				e.getAttributes().setOperReset(chkOperReset.isSelected());
-			if (!chkProgEnable.isIndeterminate())
-				e.getAttributes().setProgEnable(chkProgEnable.isSelected());
 			if (!chkLatched.isIndeterminate())
 				e.getAttributes().setLatched(chkLatched.isSelected());
 			if (!chkAckReq.isIndeterminate())
 				e.getAttributes().setAckRequired(chkAckReq.isSelected());
-			if (!chkOperDisable.isIndeterminate())
-				e.getAttributes().setOperDisable(chkOperDisable.isSelected());
-			if (!chkOperEnable.isIndeterminate())
-				e.getAttributes().setOperEnable(chkOperEnable.isSelected());
-			if (!chkOperSuppress.isIndeterminate())
-				e.getAttributes().setOperSuppress(chkOperSuppress.isSelected());
-			if (!chkOperShelve.isIndeterminate())
-				e.getAttributes().setOperShelve(chkOperShelve.isSelected());
-			if (!chkProgDisable.isIndeterminate())
-				e.getAttributes().setProgDisable(chkProgDisable.isSelected());
-			if (!chkCondition.isIndeterminate())
-				e.getAttributes().setCondition(chkCondition.isSelected());
 		});
 
 		langOList.clear();

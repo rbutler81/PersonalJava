@@ -1,4 +1,5 @@
 package com.cimcorp.plcUtil.almdEditor.csv;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -17,101 +18,109 @@ import javafx.scene.control.Alert.AlertType;
 public class CSVUtil {
 
 	public static List<String[]> read(String file, String separator) throws IOException {
-		
+
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = "";
 		List<String[]> o = new ArrayList<String[]>();
-		
-		while ((line = br.readLine()) != null){
-				String[] s = line.split(separator, -1);
-				o.add(s);
+
+		while ((line = br.readLine()) != null) {
+			String[] s = line.split(separator, -1);
+			o.add(s);
 		}
 		br.close();
-		
+
 		return o;
 	}
-	
+
 	public static String[] mergeElements(String[] l, String separator, String start, String end) {
-		
+
 		int s = Array.getLength(l);
 		int first = 0;
 		int last = 0;
-		
+
 		for (int i = 0; i < s; i++) {
-			
-			if (l[i].startsWith(start) && !l[i].endsWith(end)){
+
+			if (l[i].startsWith(start) && !l[i].endsWith(end)) {
 				first = i;
 			}
-			if (!l[i].startsWith(start) && l[i].endsWith(end)){
+			if (!l[i].startsWith(start) && l[i].endsWith(end)) {
 				last = i;
 			}
 		}
-		
-		if (first == last) return l;
+
+		if (first == last)
+			return l;
 		else if (last > first) {
-			
+
 			int d = last - first;
 			int n = s - d;
 			String[] r = new String[n];
 			r[first] = "";
-			
+
 			for (int i = 0; i < s; i++) {
-				if (i < first) r[i] = l[i];
-				else if (i > last) r[i - d] = l[i];
+				if (i < first)
+					r[i] = l[i];
+				else if (i > last)
+					r[i - d] = l[i];
 				else {
-					if (i < last) r[first] = r[first] + l[i] + separator;
-					else r[first] = r[first] + l[i];
+					if (i < last)
+						r[first] = r[first] + l[i] + separator;
+					else
+						r[first] = r[first] + l[i];
 				}
 			}
-			
+
 			return r;
-		}
-		else return l;
-		
-		
+		} else
+			return l;
+
 	}
-	
+
 	public static void write(List<String[]> c, String file, String separator) throws IOException {
-		
+
 		BufferedWriter bw;
-		
+
 		try {
 			bw = new BufferedWriter(new FileWriter(file));
-			
-			for (int i = 0; i < c.size(); i++){
-				
+
+			for (int i = 0; i < c.size(); i++) {
+
 				int arraySize = Array.getLength(c.get(i));
 				String line = "";
-				
-				for (int j = 0; j < arraySize; j++){
-					
+
+				for (int j = 0; j < arraySize; j++) {
+
 					line = line + c.get(i)[j];
-					if (j < (arraySize - 1)) line = line + separator;
+					if (j < (arraySize - 1))
+						line = line + separator;
 				}
-				
+
 				line = line + "\r\n";
 				bw.write(line);
 			}
 			bw.close();
-			
+
 		} catch (FileNotFoundException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Save Error");
 			alert.setContentText(e.getMessage());
 			alert.showAndWait();
 		}
-	} 
-	
+	}
+
 	@SuppressWarnings("unchecked")
-	public static void writeObject(List<? extends CSVWriter> l, String file, String separator) throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
-		
-		try{
-		Class<?> cls = l.get(0).getClass();
-		Object obj = cls.newInstance();
-		Method m = cls.getMethod("toCSV", List.class);
-		List<String[]> i = (List<String[]>) m.invoke(obj, l);
-		write(i, file, separator);
-		} catch (IndexOutOfBoundsException e){}
-		
+	public static void writeObject(List<? extends CSVWriter> l, String file, String separator)
+			throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, InstantiationException {
+
+		try {
+			Class<?> cls = l.get(0).getClass();
+			Object obj = cls.newInstance();
+			Method m = cls.getMethod("toCSV", List.class);
+			List<String[]> i = (List<String[]>) m.invoke(obj, l);
+			write(i, file, separator);
+		} catch (IndexOutOfBoundsException e) {
+		}
+
 	}
 }

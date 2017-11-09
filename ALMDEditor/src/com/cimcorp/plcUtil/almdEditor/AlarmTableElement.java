@@ -9,7 +9,7 @@ public class AlarmTableElement {
 	private int time;
 	private String type;
 	private String asset;
-	
+
 	public AlarmTableElement() {
 		name = "";
 		description = "";
@@ -17,7 +17,7 @@ public class AlarmTableElement {
 		type = "";
 		asset = "";
 	}
-	
+
 	public AlarmTableElement(int bit, String name, String description, String reset, int time) {
 		this.bit = bit;
 		this.name = name;
@@ -25,22 +25,21 @@ public class AlarmTableElement {
 		this.reset = reset;
 		this.time = time;
 	}
-	
+
 	public AlarmTableElement(String asset, String type, AlarmTableElement a) {
-		
+
 		bit = a.getBit();
 		name = a.getName().replace("<A>", asset);
 		this.asset = asset;
-		
+
 		if (a.getDescription().equals("")) {
 			description = name;
-		}
-		else {
+		} else {
 			description = a.getDescription().replace("<A>", asset);
 		}
-		
+
 		this.reset = a.getReset().replace("<A>", asset);
-		
+
 		this.type = type;
 		time = a.getTime();
 	}
@@ -100,5 +99,5 @@ public class AlarmTableElement {
 	public void setAsset(String asset) {
 		this.asset = asset;
 	}
-	
+
 }

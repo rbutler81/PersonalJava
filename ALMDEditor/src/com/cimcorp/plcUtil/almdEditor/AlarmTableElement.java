@@ -8,12 +8,14 @@ public class AlarmTableElement {
 	private String reset;
 	private int time;
 	private String type;
+	private String asset;
 	
 	public AlarmTableElement() {
 		name = "";
 		description = "";
 		reset = "";
 		type = "";
+		asset = "";
 	}
 	
 	public AlarmTableElement(int bit, String name, String description, String reset, int time) {
@@ -27,27 +29,17 @@ public class AlarmTableElement {
 	public AlarmTableElement(String asset, String type, AlarmTableElement a) {
 		
 		bit = a.getBit();
-		name = asset + " " + a.getName();
+		name = a.getName().replace("<A>", asset);
+		this.asset = asset;
 		
 		if (a.getDescription().equals("")) {
 			description = name;
 		}
 		else {
-			description = asset + " " + a.getDescription();
+			description = a.getDescription().replace("<A>", asset);
 		}
 		
-		if (!a.getReset().equals("")) {
-			
-			if (a.getReset().startsWith("ASSET.")) {
-				reset = asset + "." + a.getReset().substring(6);
-			}
-			else {
-				reset = a.getReset();
-			}
-		}
-		else {
-			reset = "";
-		}
+		this.reset = a.getReset().replace("<A>", asset);
 		
 		this.type = type;
 		time = a.getTime();
@@ -100,7 +92,13 @@ public class AlarmTableElement {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
+
+	public String getAsset() {
+		return asset;
+	}
+
+	public void setAsset(String asset) {
+		this.asset = asset;
+	}
 	
 }

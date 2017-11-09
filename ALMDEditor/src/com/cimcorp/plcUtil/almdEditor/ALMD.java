@@ -180,6 +180,14 @@ public class ALMD implements CSVWriter {
 	public StringProperty alarmClassProperty() {
 		return getAttributes().alarmClassProperty();
 	}
+	
+	public AlarmTableElement getAlarmDetails() {
+		return alarmDetails;
+	}
+
+	public void setAlarmDetails(AlarmTableElement alarmDetails) {
+		this.alarmDetails = alarmDetails;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -213,17 +221,17 @@ public class ALMD implements CSVWriter {
 							"ATTRIBUTES" });
 				}
 
-				r.add(new String[] { "TAG", e.getScope(), e.getName(), "\"\"", "\"ALARM_DIGITAL\"", "\"\"",
+				r.add(new String[] { "TAG", e.getScope(), e.getName().replace(" ", "_"), "\"\"", "\"ALARM_DIGITAL\"", "\"\"",
 						e.getAttributes().toString() });
 
 				if (!e.getDescription().equals("")) {
-					r.add(new String[] { "ALMMSG:en-US", e.getScope(), e.getName(), "\"" + e.getDescription() + "\"",
+					r.add(new String[] { "ALMMSG:en-US", e.getScope(), e.getName().replace(" ", "_"), "\"" + e.getDescription() + "\"",
 							"", "\"AM\"" });
 				}
 
 				for (Entry<String, String> b : e.getLangDesc().entrySet()) {
 					if (!b.getKey().equals("en-US")) {
-						r.add(new String[] { "ALMMSG:" + b.getKey(), e.getScope(), e.getName(),
+						r.add(new String[] { "ALMMSG:" + b.getKey(), e.getScope(), e.getName().replace(" ", "_"),
 								"\"" + b.getValue() + "\"", "", "\"AM\"" });
 					}
 				}
@@ -329,6 +337,34 @@ public class ALMD implements CSVWriter {
 		
 		for (AlarmTableElement e : alarmList) {
 			rVal.add(new ALMD(e));
+		}
+		
+		return rVal;
+	}
+	
+	public String generateALMDBranch() {
+		String rVal = "SOR ALMD " + this.name.get().replace(" ", "_") + " 0 ";
+		if (this.getAlarmDetails().getReset().equals("")) {
+			rVal = rVal + "0 0 0 EOR ";
+		}
+		else {
+			rVal = rVal + this.getAlarmDetails().getReset().replace(" ", "_") + " 0 0 EOR ";
+		}
+		return rVal;
+	}
+	
+	public String generateAlarmFaultBranch() {
+		
+		String rVal = "SOR XIC " + this.name.get().replace(" ", "_") + ".InAlarm ";
+		if (this.getAlarmDetails().getType().equals("A")) {
+			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms." + this.getAlarmDetails().getBit() + " EOR ";
+		}
+		else if (this.getAlarmDetails().getType().equals("F")) {
+			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults." + this.getAlarmDetails().getBit() + " EOR ";
+		}
+		else if (this.getAlarmDetails().getType().equals("B")) {
+			rVal = rVal + "BST OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms." + this.getAlarmDetails().getBit() + " NXB " +
+							"OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults." + this.getAlarmDetails().getBit() + " BND EOR ";
 		}
 		
 		return rVal;

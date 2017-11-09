@@ -289,6 +289,14 @@ public class Controller {
 
 			almdOList = FXCollections.observableArrayList(almdList);
 			tableView.setItems(almdOList);
+			
+			String almdBranch = "";
+			String alarmBranch = "";
+			for (ALMD a : almdList) {
+				almdBranch = almdBranch + a.generateALMDBranch();
+				alarmBranch = alarmBranch + a.generateAlarmFaultBranch();
+			}
+			System.out.println(almdBranch + alarmBranch);
 		}
 	}
 

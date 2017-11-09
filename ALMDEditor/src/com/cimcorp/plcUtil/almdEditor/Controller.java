@@ -44,6 +44,7 @@ public class Controller {
 	 	@FXML private Button btnDuplicate;
 	 	@FXML private Button btnEdit;
 	 	@FXML private Button btnDescDetails;
+	 	@FXML private Button btnDisplayCode;
 	 	
 	 	@FXML private TableView<ALMD> tableView;
 	 	@FXML private TableColumn<ALMD, String> tblColName;
@@ -289,14 +290,6 @@ public class Controller {
 
 			almdOList = FXCollections.observableArrayList(almdList);
 			tableView.setItems(almdOList);
-			
-			String almdBranch = "";
-			String alarmBranch = "";
-			for (ALMD a : almdList) {
-				almdBranch = almdBranch + a.generateALMDBranch();
-				alarmBranch = alarmBranch + a.generateAlarmFaultBranch();
-			}
-			System.out.println(almdBranch + alarmBranch);
 		}
 	}
 
@@ -315,6 +308,22 @@ public class Controller {
 
 				CSVUtil.writeObject(almdList, selectedFile.toString(), ",");
 			}
+		}
+	}
+	
+	@FXML
+	void onDisplayCodeBtn(ActionEvent event) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, InstantiationException, IOException {
+
+		if (almdOList.size() > 0) {
+			String almdBranch = "";
+			String alarmBranch = "";
+			for (ALMD a : almdOList) {
+				almdBranch = almdBranch + a.generateALMDBranch();
+				alarmBranch = alarmBranch + a.generateAlarmFaultBranch();
+			}
+			
+			Popup.display(almdBranch + alarmBranch);
 		}
 	}
 

@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
+
 public class ALMDCompare {
 
 	public static String scope(List<ALMD> a) {
@@ -195,6 +199,56 @@ public class ALMDCompare {
 		});
 
 		return o;
+	}
+
+	public static String asset(List<ALMD> a) {
+		List<ALMD> b = a.stream().filter(e -> e.getAsset().equals(a.get(0).getAsset())).collect(Collectors.toList());
+		if (a.size() == b.size())
+			return a.get(0).getAsset();
+		else
+			return "-";
+	};
+
+	public static String resetBit(List<ALMD> a) {
+		List<ALMD> b = a.stream().filter(e -> e.getResetBit().equals(a.get(0).getResetBit()))
+				.collect(Collectors.toList());
+		if (a.size() == b.size())
+			return a.get(0).getResetBit();
+		else
+			return "-";
+	};
+
+	public static String alarmBit(List<ALMD> a) {
+		List<ALMD> b = a.stream().filter(e -> e.getAlarmBit().equals(a.get(0).getAlarmBit()))
+				.collect(Collectors.toList());
+		if (a.size() == b.size())
+			return a.get(0).getAlarmBit();
+		else
+			return "-";
+	};
+
+	public static void type(List<ALMD> a, ComboBox<String> cmb) {
+
+		ObservableList<String> comboTypeItems;
+
+		List<ALMD> b = a.stream().filter(e -> e.getType().equals(a.get(0).getType())).collect(Collectors.toList());
+		if (a.size() == b.size()) {
+			comboTypeItems = FXCollections.observableArrayList("Alarm", "Fault", "Both");
+			if (a.get(0).getType().equals("A")) {
+				cmb.setItems(comboTypeItems);
+				cmb.getSelectionModel().select(0);
+			} else if (a.get(0).getType().equals("F")) {
+				cmb.setItems(comboTypeItems);
+				cmb.getSelectionModel().select(1);
+			} else if (a.get(0).getType().equals("B")) {
+				cmb.setItems(comboTypeItems);
+				cmb.getSelectionModel().select(2);
+			}
+		} else {
+			comboTypeItems = FXCollections.observableArrayList("-", "Alarm", "Fault", "Both");
+			cmb.setItems(comboTypeItems);
+			cmb.getSelectionModel().select(0);
+		}
 	}
 
 }

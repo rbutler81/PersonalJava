@@ -30,7 +30,10 @@ public class ALMD implements CSVWriter {
 	private ALMDAttributes attributes;
 	private StringProperty languages;
 	private ObservableMap<String, String> langDesc;
-	private AlarmTableElement alarmDetails;
+	private String type = "A";
+	private String asset;
+	private String alarmBit;
+	private String resetBit;
 
 	public ALMD() {
 		this.scope = new SimpleStringProperty("");
@@ -39,23 +42,31 @@ public class ALMD implements CSVWriter {
 		this.description = new SimpleStringProperty("");
 		this.attributes = new ALMDAttributes();
 		this.langDesc = FXCollections.observableHashMap();
+		type = "A";
+		asset = "";
+		alarmBit = "0";
+		resetBit = "";
 		this.langDesc.addListener((MapChangeListener<String, String>) m -> {
 			genLanguages();
 		});
 	}
 
 	public ALMD(AlarmTableElement alarmDetails) {
-		this.alarmDetails = alarmDetails;
 		this.scope = new SimpleStringProperty("");
 		this.name = new SimpleStringProperty(alarmDetails.getName());
 		this.description = new SimpleStringProperty(alarmDetails.getDescription());
 		this.attributes = new ALMDAttributes();
 		this.langDesc = FXCollections.observableHashMap();
+		this.getAttributes().setMinDurationPRE(Integer.toString(alarmDetails.getTime()));
+		this.type = alarmDetails.getType();
+		this.asset = alarmDetails.getAsset();
+		this.alarmBit = Integer.toString(alarmDetails.getBit());
+		this.resetBit = alarmDetails.getReset();
+
 		genLanguages();
 		this.langDesc.addListener((MapChangeListener<String, String>) m -> {
 			genLanguages();
 		});
-		this.getAttributes().setMinDurationPRE(Integer.toString(this.alarmDetails.getTime()));
 	}
 
 	public ALMD(String scope, String name, String description, ALMDAttributes attributes,
@@ -65,6 +76,10 @@ public class ALMD implements CSVWriter {
 		this.description = new SimpleStringProperty(description);
 		this.attributes = attributes;
 		this.langDesc = FXCollections.observableHashMap();
+		type = "A";
+		asset = "";
+		alarmBit = "0";
+		resetBit = "";
 
 		for (Entry<String, String> e : langDesc.entrySet()) {
 			this.langDesc.put(e.getKey(), e.getValue());
@@ -83,6 +98,10 @@ public class ALMD implements CSVWriter {
 		this.description = new SimpleStringProperty(almd.getDescription());
 		this.attributes = new ALMDAttributes(almd.getAttributes());
 		this.langDesc = FXCollections.observableHashMap();
+		this.type = almd.getType();
+		this.asset = almd.getAsset();
+		this.alarmBit = almd.getAlarmBit();
+		this.resetBit = almd.getResetBit();
 
 		for (Entry<String, String> e : almd.getLangDesc().entrySet()) {
 			this.langDesc.put(e.getKey(), e.getValue());
@@ -163,6 +182,38 @@ public class ALMD implements CSVWriter {
 		return languages.get();
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getAsset() {
+		return asset;
+	}
+
+	public void setAsset(String asset) {
+		this.asset = asset;
+	}
+
+	public String getAlarmBit() {
+		return alarmBit;
+	}
+
+	public void setAlarmBit(String alarmBit) {
+		this.alarmBit = alarmBit;
+	}
+
+	public String getResetBit() {
+		return resetBit;
+	}
+
+	public void setResetBit(String resetBit) {
+		this.resetBit = resetBit;
+	}
+
 	// Properties from ALMDAttributes that need to binded to UI
 	public BooleanProperty latchedProperty() {
 		return getAttributes().latchedProperty();
@@ -178,14 +229,6 @@ public class ALMD implements CSVWriter {
 
 	public StringProperty alarmClassProperty() {
 		return getAttributes().alarmClassProperty();
-	}
-
-	public AlarmTableElement getAlarmDetails() {
-		return alarmDetails;
-	}
-
-	public void setAlarmDetails(AlarmTableElement alarmDetails) {
-		this.alarmDetails = alarmDetails;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -344,10 +387,10 @@ public class ALMD implements CSVWriter {
 
 	public String generateALMDBranch() {
 		String rVal = "SOR ALMD " + this.name.get().replace(" ", "_") + " 0 ";
-		if (this.getAlarmDetails().getReset().equals("")) {
+		if (this.getResetBit().equals("")) {
 			rVal = rVal + "0 0 0 EOR ";
 		} else {
-			rVal = rVal + this.getAlarmDetails().getReset().replace(" ", "_") + " 0 0 EOR ";
+			rVal = rVal + this.getResetBit().replace(" ", "_") + " 0 0 EOR ";
 		}
 		return rVal;
 	}
@@ -355,17 +398,13 @@ public class ALMD implements CSVWriter {
 	public String generateAlarmFaultBranch() {
 
 		String rVal = "SOR XIC " + this.name.get().replace(" ", "_") + ".InAlarm ";
-		if (this.getAlarmDetails().getType().equals("A")) {
-			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms."
-					+ this.getAlarmDetails().getBit() + " EOR ";
-		} else if (this.getAlarmDetails().getType().equals("F")) {
-			rVal = rVal + "OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults."
-					+ this.getAlarmDetails().getBit() + " EOR ";
-		} else if (this.getAlarmDetails().getType().equals("B")) {
-			rVal = rVal + "BST OTE " + this.getAlarmDetails().getAsset().replace(" ", "_") + ".Alarms."
-					+ this.getAlarmDetails().getBit() + " NXB " + "OTE "
-					+ this.getAlarmDetails().getAsset().replace(" ", "_") + ".Faults." + this.getAlarmDetails().getBit()
-					+ " BND EOR ";
+		if (this.getType().equals("A")) {
+			rVal = rVal + "OTE " + this.getAsset().replace(" ", "_") + ".Alarms." + this.getAlarmBit() + " EOR ";
+		} else if (this.getType().equals("F")) {
+			rVal = rVal + "OTE " + this.getAsset().replace(" ", "_") + ".Faults." + this.getAlarmBit() + " EOR ";
+		} else if (this.getType().equals("B")) {
+			rVal = rVal + "BST OTE " + this.getAsset().replace(" ", "_") + ".Alarms." + this.getAlarmBit() + " NXB "
+					+ "OTE " + this.getAsset().replace(" ", "_") + ".Faults." + this.getAlarmBit() + " BND EOR ";
 		}
 
 		return rVal;

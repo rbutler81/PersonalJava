@@ -39,6 +39,31 @@ public class Popup {
 		popupwindow.setScene(scene1);
 
 		popupwindow.showAndWait();
+	}
+	
+	public static void displayMsg(String t) {
+		Stage popupwindow = new Stage();
 
+		popupwindow.initModality(Modality.APPLICATION_MODAL);
+		popupwindow.resizableProperty().set(false);
+		popupwindow.setTitle("Error");
+
+		Label l1 = new Label(t);
+
+		Button button1 = new Button("Close");
+
+		button1.setOnAction(e -> popupwindow.close());
+
+		VBox layout = new VBox(10);
+
+		layout.getChildren().addAll(l1, button1);
+
+		layout.setAlignment(Pos.CENTER);
+
+		Scene scene1 = new Scene(layout, 200, 100);
+
+		popupwindow.setScene(scene1);
+
+		popupwindow.showAndWait();
 	}
 }

@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -105,6 +106,15 @@ public class Controller {
 	private TextField txtDupContains;
 	@FXML
 	private TextField txtDupWith;
+	@FXML
+	private TextField txtAsset;
+	@FXML
+	private TextField txtResetBit;
+	@FXML
+	private TextField txtAlarmBit;
+
+	@FXML
+	private ComboBox<String> comboType;
 
 	private List<Label> lblList;
 	@FXML
@@ -131,6 +141,14 @@ public class Controller {
 	private Label lblAssoc3;
 	@FXML
 	private Label lblAssoc4;
+	@FXML
+	private Label lblAsset;
+	@FXML
+	private Label lblResetBit;
+	@FXML
+	private Label lblType;
+	@FXML
+	private Label lblAlarmBit;
 
 	private List<CheckBox> chkList;
 	@FXML
@@ -203,6 +221,10 @@ public class Controller {
 		lblList.add(lblAssoc2);
 		lblList.add(lblAssoc3);
 		lblList.add(lblAssoc4);
+		lblList.add(lblAsset);
+		lblList.add(lblResetBit);
+		lblList.add(lblType);
+		lblList.add(lblAlarmBit);
 
 		txtFieldList = new ArrayList<TextField>();
 		txtFieldList.add(txtName);
@@ -217,12 +239,19 @@ public class Controller {
 		txtFieldList.add(txtAssoc2);
 		txtFieldList.add(txtAssoc3);
 		txtFieldList.add(txtAssoc4);
+		txtFieldList.add(txtAsset);
+		txtFieldList.add(txtResetBit);
+		txtFieldList.add(txtAlarmBit);
 
 		chkList = new ArrayList<CheckBox>();
 		chkList.add(chkLatched);
 		chkList.add(chkAckReq);
 
 		resetEdits();
+
+		ObservableList<String> comboTypeItems = FXCollections.observableArrayList("Alarm", "Fault", "Both");
+		comboType.setItems(comboTypeItems);
+		comboType.getSelectionModel().select(0);
 
 		tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -260,6 +289,7 @@ public class Controller {
 		textFieldOnlyNum(txtClass, 10);
 		textFieldOnlyNum(txtShelveDuration, 20);
 		textFieldOnlyNum(txtMaxShelveDuration, 20);
+		textFieldOnlyNumLTVal(txtAlarmBit, 2, 33);
 
 		txtDupWith.textProperty().addListener((obs, oldVal, newVal) -> {
 			txtDupWithEnabler(newVal);
@@ -277,34 +307,42 @@ public class Controller {
 	}
 
 	@FXML
-	void onImportBtn(ActionEvent event) throws IOException {
+	void onImportBtn(ActionEvent event) {
 
-		FileChooser fc = new FileChooser();
-		fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-		File selectedFile = fc.showOpenDialog(null);
+		try {
+			FileChooser fc = new FileChooser();
+			fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+			File selectedFile = fc.showOpenDialog(null);
 
-		if (selectedFile != null) {
-			List<String[]> csvData = CSVUtil.read(selectedFile.toString(), ",");
-			List<ALMD> almdList = ALMD.findALMDS(csvData);
+			if (selectedFile != null) {
+				List<String[]> csvData = CSVUtil.read(selectedFile.toString(), ",");
+				List<ALMD> almdList = ALMD.findALMDS(csvData);
 
-			almdOList = FXCollections.observableArrayList(almdList);
-			tableView.setItems(almdOList);
+				almdOList = FXCollections.observableArrayList(almdList);
+				tableView.setItems(almdOList);
+			}
+		} catch (Exception e) {
+			Popup.displayMsg("Could not load CSV file");
 		}
 	}
 
 	@FXML
-	void onAlarmsImportBtn(ActionEvent event) throws IOException {
+	void onAlarmsImportBtn(ActionEvent event) {
 
-		FileChooser fc = new FileChooser();
-		fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-		File selectedFile = fc.showOpenDialog(null);
+		try {
+			FileChooser fc = new FileChooser();
+			fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+			File selectedFile = fc.showOpenDialog(null);
 
-		if (selectedFile != null) {
-			List<String[]> csvData = CSVUtil.read(selectedFile.toString(), ",");
-			List<ALMD> almdList = ALMD.parseSpreadsheet(csvData);
+			if (selectedFile != null) {
+				List<String[]> csvData = CSVUtil.read(selectedFile.toString(), ",");
+				List<ALMD> almdList = ALMD.parseSpreadsheet(csvData);
 
-			almdOList = FXCollections.observableArrayList(almdList);
-			tableView.setItems(almdOList);
+				almdOList = FXCollections.observableArrayList(almdList);
+				tableView.setItems(almdOList);
+			}
+		} catch (Exception e) {
+			Popup.displayMsg("Could not load CSV file");
 		}
 	}
 
@@ -522,9 +560,13 @@ public class Controller {
 				n.setAttributes(att);
 				String aName = n.getName();
 				String desc = n.getDescription();
+				String asset = n.getAsset();
+				String resetBit = n.getResetBit();
 
 				aName = aName.replaceAll(txtDupContains.getText(), txtDupWith.getText());
 				desc = desc.replaceAll(txtDupContains.getText(), txtDupWith.getText());
+				asset = asset.replaceAll(txtDupContains.getText(), txtDupWith.getText());
+				resetBit = resetBit.replaceAll(txtDupContains.getText(), txtDupWith.getText());
 
 				n.getLangDesc().entrySet().stream().forEach(m -> {
 					m.setValue(m.getValue().replaceAll(txtDupContains.getText(), txtDupWith.getText()));
@@ -532,6 +574,8 @@ public class Controller {
 
 				n.setName(aName);
 				n.setDescription(desc);
+				n.setAsset(asset);
+				n.setResetBit(resetBit);
 				almdOList.add(n);
 			}
 
@@ -588,6 +632,8 @@ public class Controller {
 			tableView.setDisable(true);
 			btnImport.setDisable(true);
 			btnExport.setDisable(true);
+			btnAlarmsImport.setDisable(true);
+			btnDisplayCode.setDisable(true);
 			btnApplyEdit.setDisable(false);
 			btnDescDetails.setDisable(false);
 			btnCancelEdit.setDisable(false);
@@ -608,6 +654,8 @@ public class Controller {
 				e.setDisable(false);
 			}
 
+			comboType.setDisable(false);
+
 			txtName.setText(ALMDCompare.name(selection));
 			txtScope.setText(ALMDCompare.scope(selection));
 			txtDescription.setText(ALMDCompare.description(selection));
@@ -621,6 +669,10 @@ public class Controller {
 			txtAssoc2.setText(ALMDCompare.assocTag2(selection));
 			txtAssoc3.setText(ALMDCompare.assocTag3(selection));
 			txtAssoc4.setText(ALMDCompare.assocTag4(selection));
+			txtAsset.setText(ALMDCompare.asset(selection));
+			txtResetBit.setText(ALMDCompare.resetBit(selection));
+			txtAlarmBit.setText(ALMDCompare.alarmBit(selection));
+			ALMDCompare.type(selection, comboType);
 
 			CheckBoxEnhanced.setState(chkLatched, ALMDCompare.latched(selection));
 			CheckBoxEnhanced.setState(chkAckReq, ALMDCompare.ackRequired(selection));
@@ -638,6 +690,8 @@ public class Controller {
 
 		tableView.setDisable(false);
 		btnImport.setDisable(false);
+		btnAlarmsImport.setDisable(false);
+		btnDisplayCode.setDisable(false);
 		btnExport.setDisable(false);
 		btnApplyEdit.setDisable(true);
 		btnCancelEdit.setDisable(true);
@@ -658,6 +712,8 @@ public class Controller {
 		for (Label e : lblList) {
 			e.setDisable(true);
 		}
+
+		comboType.setDisable(true);
 	}
 
 	private void applyEdits(ObservableList<ALMD> selection) {
@@ -688,6 +744,21 @@ public class Controller {
 				e.getAttributes().setAssocTag3(txtAssoc3.getText());
 			if (!txtAssoc4.getText().equals("-"))
 				e.getAttributes().setAssocTag4(txtAssoc4.getText());
+			if (!txtAsset.getText().equals("-"))
+				e.setAsset(txtAsset.getText());
+			if (!txtResetBit.getText().equals("-"))
+				e.setResetBit(txtResetBit.getText());
+			if (!txtAlarmBit.getText().equals("-"))
+				e.setAlarmBit(txtAlarmBit.getText());
+			if (!comboType.getSelectionModel().getSelectedItem().equals("-")) {
+				if (comboType.getSelectionModel().getSelectedItem().equals("Alarm")) {
+					e.setType("A");
+				} else if (comboType.getSelectionModel().getSelectedItem().equals("Fault")) {
+					e.setType("F");
+				} else if (comboType.getSelectionModel().getSelectedItem().equals("Both")) {
+					e.setType("B");
+				}
+			}
 
 			if (langDescMap == null || langDescMap.entrySet().size() == 0) {
 				langDescMap = new HashMap<String, String>();
@@ -748,6 +819,32 @@ public class Controller {
 						number = true;
 				}
 				if (newVal.length() > max || !number)
+					textField.setText(oldVal);
+				if (newVal.length() > 1 && newVal.contains("-"))
+					textField.setText(oldVal);
+				if (newVal.length() > 1 && newVal.startsWith("0"))
+					textField.setText(oldVal);
+			}
+		});
+	}
+
+	private static void textFieldOnlyNumLTVal(TextField textField, int max, int LT) {
+		textField.textProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal.length() > oldVal.length()) {
+				boolean number = false;
+				for (String e : numbers) {
+					if (e.equals(newVal.substring(newVal.length() - 1)))
+						number = true;
+				}
+				if (newVal.length() > max || !number)
+					textField.setText(oldVal);
+				if (newVal.length() > 1 && newVal.contains("-"))
+					textField.setText(oldVal);
+				if (!newVal.contains("-")) {
+					if (Integer.parseInt(newVal) >= LT)
+						textField.setText(oldVal);
+				}
+				if (newVal.length() > 1 && newVal.startsWith("0"))
 					textField.setText(oldVal);
 			}
 		});

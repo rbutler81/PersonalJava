@@ -161,6 +161,7 @@ public class Controller {
 	private CheckBox chkIncrement;
 
 	private ObservableList<ALMD> almdOList;
+	private List<String> descDetailsLoaded = new ArrayList<String>();
 
 	KeyCombination keyComboCtrlD = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
 	KeyCombination keyComboCtrlN = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
@@ -428,6 +429,11 @@ public class Controller {
 
 		descController.getLstLang().setItems(langOList);
 		descController.setLangOList(langOList);
+		
+		descDetailsLoaded.clear();
+		langOList.stream().forEach(p -> {
+			descDetailsLoaded.add(p);
+		});
 
 		if (eng) {
 			boolean done = false;
@@ -775,6 +781,18 @@ public class Controller {
 					e.getLangDesc().put(p.getKey(), p.getValue());
 				}
 			});
+			
+			List<String> toRemove = new ArrayList<String>();
+			descDetailsLoaded.stream().forEach(p -> {
+				if (!langOList.contains(p)) {
+					toRemove.add(p);
+				}
+			});
+			
+			
+			for (String s : toRemove) {
+				e.getLangDesc().remove(s);
+			}
 
 			if (!chkLatched.isIndeterminate())
 				e.getAttributes().setLatched(chkLatched.isSelected());
@@ -784,6 +802,7 @@ public class Controller {
 
 		langOList.clear();
 		langDescMap.clear();
+		descDetailsLoaded.clear();
 		tableView.refresh();
 	}
 

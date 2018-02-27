@@ -343,7 +343,9 @@ public class Controller {
 				tableView.setItems(almdOList);
 			}
 		} catch (Exception e) {
-			Popup.displayMsg("Could not load CSV file");
+			Popup.displayMsg("Could not load CSV file: ");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

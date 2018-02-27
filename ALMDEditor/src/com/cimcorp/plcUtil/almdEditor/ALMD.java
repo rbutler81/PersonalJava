@@ -319,8 +319,9 @@ public class ALMD implements CSVWriter {
 		for (int i = bitsRow; i < assetsRow; i++) {
 
 			if (i == bitsRow) {
+				int k = Array.getLength(list.get(bitsRow));
 				// Get all the "Bit" fields and add them to new objects
-				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
+				for (int j = 1; j < k; j++) {
 					AlarmTableElement b = new AlarmTableElement();
 					b.setBit(Integer.parseInt(list.get(i)[j]));
 					alarmTemplate.add(b);

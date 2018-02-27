@@ -239,7 +239,7 @@ public class ALMDAttributes {
 				+ "MinDurationPRE := " + getMinDurationPRE() + ", " + "ShelveDuration := " + getShelveDuration() + ", "
 				+ "MaxShelveDuration := " + getMaxShelveDuration() + ", "
 				+ "ProgTime := \"\"DT#1969-12-31-19:00:00.000000(UTC-05:00)\"\", " + "EnableIn := " + "false" + ", "
-				+ "In := " + "false" + ", " + "InFault := " + "false" + ", " + "Condition := " + "false" + ", "
+				+ "In := " + "false" + ", " + "InFault := " + "false" + ", " + "Condition := " + "true" + ", "
 				+ "AckRequired := " + isAckRequired() + ", " + "Latched := " + isLatched() + ", " + "ProgAck := "
 				+ "false" + ", " + "OperAck := " + "false" + ", " + "ProgReset := " + "false" + ", " + "OperReset := "
 				+ "false" + ", " + "ProgSuppress := " + "false" + ", " + "OperSuppress := " + "false" + ", "

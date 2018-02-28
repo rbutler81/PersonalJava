@@ -58,6 +58,7 @@ public class ALMD implements CSVWriter {
 		this.attributes = new ALMDAttributes();
 		this.langDesc = FXCollections.observableHashMap();
 		this.getAttributes().setMinDurationPRE(Integer.toString(alarmDetails.getTime()));
+		this.getAttributes().setAssocTag1(alarmDetails.getAssocTag1());
 		this.type = alarmDetails.getType();
 		this.asset = alarmDetails.getAsset();
 		this.alarmBit = Integer.toString(alarmDetails.getBit());
@@ -312,10 +313,11 @@ public class ALMD implements CSVWriter {
 				bitsRow = i;
 		}
 
-		int assetsRow = bitsRow + 5;
+		int assetsRow = bitsRow + 6;
 
 		// Create template objects for parameters
 		List<AlarmTableElement> alarmTemplate = new ArrayList<AlarmTableElement>();
+		
 		for (int i = bitsRow; i < assetsRow; i++) {
 
 			if (i == bitsRow) {
@@ -358,6 +360,13 @@ public class ALMD implements CSVWriter {
 					} else {
 						alarmTemplate.get(j - 1).setTime(0);
 					}
+				}
+			}
+			
+			else if (i == bitsRow + 5) {
+				// get all "Associated Tag 1" fields and add them to object created above
+				for (int j = 1; j < Array.getLength(list.get(bitsRow)); j++) {
+					alarmTemplate.get(j - 1).setAssocTag1(list.get(i)[j]);
 				}
 			}
 

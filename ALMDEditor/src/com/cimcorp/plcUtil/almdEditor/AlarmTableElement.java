@@ -9,6 +9,7 @@ public class AlarmTableElement {
 	private int time;
 	private String type;
 	private String asset;
+	private String assocTag1;
 
 	public AlarmTableElement() {
 		name = "";
@@ -16,14 +17,16 @@ public class AlarmTableElement {
 		reset = "";
 		type = "";
 		asset = "";
+		assocTag1 = "";
 	}
 
-	public AlarmTableElement(int bit, String name, String description, String reset, int time) {
+	public AlarmTableElement(int bit, String name, String description, String reset, int time, String assocTag1) {
 		this.bit = bit;
 		this.name = name;
 		this.description = description;
 		this.reset = reset;
 		this.time = time;
+		this.assocTag1 = assocTag1;
 	}
 
 	public AlarmTableElement(String asset, String type, AlarmTableElement a) {
@@ -39,9 +42,18 @@ public class AlarmTableElement {
 		}
 
 		this.reset = a.getReset().replace("<A>", asset);
+		this.assocTag1 = a.getAssocTag1().replace("<A>", asset);
 
 		this.type = type;
 		time = a.getTime();
+	}
+
+	public String getAssocTag1() {
+		return assocTag1;
+	}
+
+	public void setAssocTag1(String assocTag1) {
+		this.assocTag1 = assocTag1;
 	}
 
 	public int getBit() {

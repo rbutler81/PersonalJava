@@ -40,7 +40,9 @@ public class Main {
 		
 		
 		/////////////////////////////
-		DatePriceList dpl = mapper.readValue(Connect.httpsGet("etherchain.org/api/statistics/price", true), DatePriceList.class);
+		//DatePriceList dpl = mapper.readValue(Connect.httpsGet("etherchain.org/api/statistics/price", true), DatePriceList.class);
+		List<String[]> rawData = CSVUtil.read("src/ethprice.csv", "\t");
+		
 		
 		EvoParamSet temp = new EvoParamSet(1);
 		/*temp.setPredicate(0, validPercent);
@@ -49,9 +51,10 @@ public class Main {
 		List<EvoBuySell> population = EvoBuySell.generatePopulationFrom(temp, POP_SIZE);
 		
 		List<DataPoint> dataList = new ArrayList<DataPoint>();
-		for (DatePrice e : dpl.getData()) {
-			dataList.add(new DataPoint(e.getDateTime(), e.getPrice()));
-		}
+		/*
+		 * for (DatePrice e : dpl.getData()) { dataList.add(new
+		 * DataPoint(e.getDateTime(), e.getPrice())); }
+		 */
 		
 		dataList = DataPoint.removeDeltasLT(dataList, 0.5, 1);
 		//DataPoint.calcDerivatives(dataList, 3);
